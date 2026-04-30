@@ -1,17 +1,39 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Utente {
-    private String login;
-    private String password;
+    protected String nome;
+    protected String cognome;
+    protected String email;
+    protected String login;
+    protected String password;
 
-    public Utente(String login, String password) {
+    public Utente(String nome, String cognome, String email, String password, String login) {
+        this.nome = nome;
+        this.cognome = cognome;
+        this.email = email;
         this.login = login;
         this.password = password;
     }
 
-    public boolean login(String login, String password) {
-        return ( login.equals(this.login) && password.equals(this.password));
+    public void mostraOrario(List orario){
+        System.out.println(orario);
+    }
+    public boolean eseguiLogin(String login, String password){
+        if(login.equals(this.login) && password.equals(this.password)){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCognome() {
+        return cognome;
     }
 }
