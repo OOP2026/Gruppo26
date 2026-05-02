@@ -15,7 +15,7 @@ public class Lezione {
         this.oraInizio = oraInizio;
         this.oraFine = oraFine;
         this.insegnamento=insegnamento;
-        this.aula=aula
+        this.aula=aula;
     }
 
     public LocalDate getGiorno() {return giorno;}
