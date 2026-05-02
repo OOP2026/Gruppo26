@@ -13,4 +13,5 @@ public class Insegnamento {
         this.anno = anno;
         this.docente = docente;
     }
+    public String getNomeInsegnamento() { return nome; }
 }

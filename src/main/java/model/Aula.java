@@ -6,5 +6,5 @@ public class Aula {
     public Aula(String nomeAula) {
         this.nomeAula = nomeAula;
     }
-    public String getAula(){ return nomeAula; }
+    public String getNomeAula(){ return nomeAula; }
 }
