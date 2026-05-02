@@ -38,4 +38,12 @@ public class RichiestaSpostamentoTest {
     assertEquals("la richiesta non coincide, dovrebbe essere approvata", RichiestaSpostamento.StatoRichiesta.APPROVATA, richiesta.getStatoRichiesta());
 
     }
+
+    @Test
+    public void testGetters() {
+        assertEquals("L'orario di inizio non coincide", LocalTime.of(9,0), richiesta.getOrarioInizioRichiesta());
+        assertEquals("L'orario di fine non coincide", LocalTime.of(11,0), richiesta.getOrarioFineRichiesta());
+        assertEquals("La data non coincide", LocalDate.of(2026, 9, 16), richiesta.getDataRichiesta());
+        assertEquals("La lezione non coincide", lezioneDaSpostare, richiesta.getLezioneRichiesta());
+    }
 }

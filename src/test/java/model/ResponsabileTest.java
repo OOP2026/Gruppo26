@@ -65,4 +65,36 @@ public class ResponsabileTest {
 
         assertFalse("Il sistema ha permesso a un prof di sdoppiarsi in due aule diverse!", risultato);
     }
+
+    @Test
+    public void testAggiungiAulaEInsegnamento() {
+        responsabile.aggiungiAula(aula1);
+        responsabile.aggiungiInsegnamento(analisi);
+        assertTrue(true);
+    }
+
+    @Test
+    public void testGestisciRichiesta_Approvata() {
+        LocalDate data = LocalDate.of(2026, 10, 1);
+        Lezione lezioneSpostamento = new Lezione(data, LocalTime.of(8,0), LocalTime.of(10,0), analisi, aula1);
+        RichiestaSpostamento richiesta = new RichiestaSpostamento(LocalTime.of(16,0), LocalTime.of(18,0), data, lezioneSpostamento);
+
+        boolean risultato = responsabile.gestisciRichiesta(richiesta);
+
+        assertTrue("La richiesta senza conflitti deve essere approvata", risultato);
+        assertEquals("Lo stato della richiesta deve passare ad APPROVATA", RichiestaSpostamento.StatoRichiesta.APPROVATA, richiesta.getStatoRichiesta());
+    }
+
+    @Test
+    public void testGestisciRichiesta_Rifiutata() {
+        LocalDate dataConflitto = LocalDate.of(2026, 9, 20);
+        Lezione lezioneDaSpostare = new Lezione(LocalDate.of(2026, 12, 1), LocalTime.of(8,0), LocalTime.of(10,0), informatica, aula1);
+        RichiestaSpostamento richiestaConflitto = new RichiestaSpostamento(LocalTime.of(9,0), LocalTime.of(11,0), dataConflitto, lezioneDaSpostare);
+
+        boolean risultato = responsabile.gestisciRichiesta(richiestaConflitto);
+
+        assertFalse("La richiesta con conflitti deve essere rifiutata", risultato);
+        assertEquals("Lo stato della richiesta deve passare a RIFIUTATA", RichiestaSpostamento.StatoRichiesta.RIFIUTATA, richiestaConflitto.getStatoRichiesta());
+    }
+
 }

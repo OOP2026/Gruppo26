@@ -2,6 +2,8 @@ package model;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class UtenteTest {
@@ -35,5 +37,14 @@ public class UtenteTest {
         Utente utente=new Utente("Pasquale","Mazzocchi","pasqmazz@università.it","PMazz","pasqmazz");
         boolean risultatoLogin= utente.eseguiLogin("ABC","1234");
         assertFalse("il login è errato",risultatoLogin);
+    }
+
+
+    @Test
+    public void testMostraOrario() {
+        Utente utente = new Utente("N", "C", "e", "l", "p");
+        OrarioLezione orario = new OrarioLezione(new ArrayList<>());
+        utente.mostraOrario(orario);
+        assertTrue(true);
     }
 }

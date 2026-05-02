@@ -14,17 +14,15 @@ public class OrarioLezione {
         this.lezioni.add(l);
     }
 
-    @Override
-    public String toString() {
-        if (lezioni.isEmpty()) {
-            return "Nessuna lezione presente in orario.";
+    public void mostraOrario(OrarioLezione orario){
+        System.out.println("--- ORARIO DELLE LEZIONI ---");
+        for (Lezione l : orario.getLezioni()) {
+            System.out.println("Data: " + l.getGiorno() +
+                    " | Ore: " + l.getOraInizio() + " - " + l.getOraFine() +
+                    " | Materia: " + l.getInsegnamento().getNomeInsegnamento() +
+                    " | Aula: " + l.getAula().getNomeAula() +
+                    " | Prof: " + l.getInsegnamento().getDocente().getCognome());
         }
-        StringBuilder testoOrario = new StringBuilder();
-        testoOrario.append("--- ORARIO DELLE LEZIONI ---\n");
-        for (Lezione l : lezioni) {
-            testoOrario.append(l.toString()).append("\n");
-        }
-        testoOrario.append("----------------------------");
-        return testoOrario.toString();
+        System.out.println("----------------------------");
     }
 }
