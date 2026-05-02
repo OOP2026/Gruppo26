@@ -9,6 +9,7 @@ public class Aula {
     }
 
     public String getAula(){
+
         return nomeAula;
     }
 }
