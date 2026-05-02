@@ -22,8 +22,8 @@ public class RichiestaSpostamento {
         this.lezione = lezione;
         this.statoRichiesta = StatoRichiesta.IN_ATTESA;
     }
-    public Lezione getLezioneRichiesta(Lezione lezione){ return lezione; }
-    public LocalTime getOrarioInizioRichiesta(LocalTime orarioInizioRichiesta){ return orarioInizioRichiesta;}
+    public Lezione getLezioneRichiesta(){ return lezione; }
+    public LocalTime getOrarioInizioRichiesta(){ return orarioInizioRichiesta;}
     public LocalTime getOrarioFineRichiesta(){ return this.orarioFineRichiesta;}
     public LocalDate getDataRichiesta(){ return dataRichiesta;}
 

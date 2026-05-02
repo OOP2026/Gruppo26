@@ -44,8 +44,9 @@ public class Responsabile extends Docente{
                }
            }
        }
-       return false;
        System.out.println("Non ci sono conflitti");
+       return false;
+
     }
 
     public boolean creaLezione(LocalDate giorno, LocalTime inizioLezione,LocalTime fineLezione,Aula aula, Insegnamento insegnamento){
