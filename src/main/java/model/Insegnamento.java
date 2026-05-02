@@ -14,4 +14,7 @@ public class Insegnamento {
         this.docente = docente;
     }
     public String getNomeInsegnamento() { return nome; }
+    public Docente getDocente() { return docente;}
+    public int getCfu() { return cfu; }
+    public int getAnno() { return anno; }
 }

@@ -10,4 +10,7 @@ public class OrarioLezione {
         this.lezioni=lezioni;
     }
     public List<Lezione> getLezioni() {return lezioni;}
+    public void aggiungiLezione(Lezione l) {
+        this.lezioni.add(l);
+    }
 }

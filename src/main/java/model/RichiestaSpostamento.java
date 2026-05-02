@@ -24,12 +24,16 @@ public class RichiestaSpostamento {
     }
     public Lezione getLezioneRichiesta(Lezione lezione){ return lezione; }
     public LocalTime getOrarioInizioRichiesta(LocalTime orarioInizioRichiesta){ return orarioInizioRichiesta;}
-    public LocalTime getOrarioFineRichiesta(LocalTime orarioFineRichiesta){ return this.orarioFineRichiesta;}
+    public LocalTime getOrarioFineRichiesta(){ return this.orarioFineRichiesta;}
     public LocalDate getDataRichiesta(){ return dataRichiesta;}
 
     public StatoRichiesta getStatoRichiesta(){ return statoRichiesta; }
     public void setStatoRichiesta(StatoRichiesta statoRichiesta) {
         this.statoRichiesta = statoRichiesta;
+    }
+
+    public void setStato(StatoRichiesta stato) {
+        this.statoRichiesta = stato;
     }
 
 }

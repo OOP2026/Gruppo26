@@ -11,7 +11,7 @@ public class AulaTest {
         String nomeAula = "Aula1";
 
         Aula aula = new Aula(nomeAula);
-        String aulaOttenuta=aula.getAula();
+        String aulaOttenuta=aula.equals();
 
         assertEquals("l'aula dovrebbe essere: Aula1",aulaOttenuta);
 
