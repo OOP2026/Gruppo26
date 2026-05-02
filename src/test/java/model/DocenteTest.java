@@ -18,8 +18,8 @@ public class DocenteTest {
         String nomeOttenuto= docente.getNome();
         String cognomeOttenuto= docente.getCognome();
 
-        assertEquals("il nome dovrebbe essere Pasquale","Pasquale",nomeOttenuto);
-        assertEquals("il cognome dovrebbe essere Mazzocchi","Mazzocchi",cognomeOttenuto);
+        assertEquals("il nome non coincide,dovrebbe essere Pasquale","Pasquale",nomeOttenuto);
+        assertEquals("il cognome non coincide, dovrebbe essere Mazzocchi","Mazzocchi",cognomeOttenuto);
 
     }
 

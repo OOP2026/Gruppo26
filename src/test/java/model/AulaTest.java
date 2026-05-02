@@ -8,12 +8,9 @@ public class AulaTest {
 
     @Test
     public void AulaTest(){
-        String nomeAula = "Aula1";
 
-        Aula aula = new Aula(nomeAula);
-        String aulaOttenuta=aula.equals();
-
-        assertEquals("l'aula dovrebbe essere: Aula1",aulaOttenuta);
+        Aula aula = new Aula("Aula1");
+        assertEquals("Aspettative:Aula1","Aula1",aula.getNomeAula());
 
     }
 }

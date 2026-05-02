@@ -29,6 +29,9 @@ public class Responsabile extends Docente{
        this.insegnamenti.add(NuovoInsegnamento);
        System.out.println("Aggiunto insegnamento: "+NuovoInsegnamento.getNomeInsegnamento());
     }
+    public void riceviRichiesta(RichiestaSpostamento richiesta) {
+        this.richieste.add(richiesta);
+    }
     public boolean verificaConflitti(LocalDate giorno, LocalTime inizioLezione,LocalTime fineLezione,Aula aula, Docente docente){
        for(Lezione l : orarioLezioni.getLezioni()){
            boolean sovrapposizione =inizioLezione.isBefore(l.getOraFine()) && fineLezione.isAfter(l.getOraInizio());
@@ -69,7 +72,7 @@ public class Responsabile extends Docente{
                richiesta.getOrarioFineRichiesta(),
                richiesta.getLezioneRichiesta().getAula(),
                richiesta.getLezioneRichiesta().getInsegnamento().getDocente());
-       if(conflitti){
+       if(!conflitti){
            richiesta.setStato(RichiestaSpostamento.StatoRichiesta.APPROVATA);
            System.out.println("Lezione spostata");
            Lezione lezioneDaModificare= richiesta.getLezioneRichiesta();

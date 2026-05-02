@@ -27,4 +27,13 @@ public class Lezione {
     public void setGiorno(LocalDate giorno) {this.giorno = giorno;}
     public void setOraFine(LocalTime oraFine) {this.oraFine = oraFine;}
     public void setOraInizio(LocalTime oraInizio) {this.oraInizio = oraInizio;}
+
+    @Override
+    public String toString() {
+        return "Data: " + giorno +
+                " | Ore: " + oraInizio + " - " + oraFine +
+                " | Materia: " + insegnamento.getNomeInsegnamento() +
+                " | Aula: " + aula.getNomeAula() +
+                " | Prof: " + insegnamento.getDocente().getCognome();
+    }
 }

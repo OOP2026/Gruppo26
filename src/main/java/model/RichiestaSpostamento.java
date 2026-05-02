@@ -24,7 +24,7 @@ public class RichiestaSpostamento {
     }
     public Lezione getLezioneRichiesta(){ return lezione; }
     public LocalTime getOrarioInizioRichiesta(){ return orarioInizioRichiesta;}
-    public LocalTime getOrarioFineRichiesta(){ return this.orarioFineRichiesta;}
+    public LocalTime getOrarioFineRichiesta(){ return orarioFineRichiesta;}
     public LocalDate getDataRichiesta(){ return dataRichiesta;}
 
     public StatoRichiesta getStatoRichiesta(){ return statoRichiesta; }
