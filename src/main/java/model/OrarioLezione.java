@@ -9,4 +9,5 @@ public class OrarioLezione {
     public OrarioLezione(List<Lezione> lezioni) {
         this.lezioni=lezioni;
     }
+    public List<Lezione> getLezioni() {return lezioni;}
 }
