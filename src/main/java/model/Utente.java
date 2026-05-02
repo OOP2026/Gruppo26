@@ -1,7 +1,5 @@
 package model;
 
-import java.util.List;
-
 public class Utente {
     protected String nome;
     protected String cognome;
@@ -17,7 +15,7 @@ public class Utente {
         this.password = password;
     }
 
-    public void mostraOrario(List orario){
+    public void mostraOrario(OrarioLezione orario){
         System.out.println(orario);
     }
     public boolean eseguiLogin(String login, String password){
@@ -26,7 +24,6 @@ public class Utente {
         }else {
             return false;
         }
-
     }
 
     public String getNome() {
