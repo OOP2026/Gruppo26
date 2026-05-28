@@ -12,6 +12,7 @@ public class LoginFrame extends JFrame {
     private JTextField textUsername;
     private JPasswordField txtPassword;
     private JButton LOGINButton;
+    private JCheckBox chkMostraPassword;
 
 
     private Controller controller;
@@ -36,10 +37,31 @@ public class LoginFrame extends JFrame {
                 if (accessoconsentito) {
                     JOptionPane.showMessageDialog(MainPanel, "Accesso eseguito con successo!!");
                 } else {
-                    JOptionPane.showMessageDialog(MainPanel, "L'utente non disponibile");
+                    JOptionPane.showMessageDialog(MainPanel, "Credenziali non valide!");
+                }
+
+                if(accessoconsentito) {
+
+                    dispose();
+
+                    HomeFrame home = new HomeFrame(controller);
+                    home.setVisible(true);
+                } else{
+                    JOptionPane.showMessageDialog(MainPanel, "Credenziali non valide!", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
+        });
+
+        chkMostraPassword.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(chkMostraPassword.isSelected()) {
+                    txtPassword.setEchoChar((char)0);
+                } else {
+                    txtPassword.setEchoChar('•');
+                }
+            }
         });
     }
 }

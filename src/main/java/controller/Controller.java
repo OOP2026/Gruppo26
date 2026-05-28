@@ -56,4 +56,7 @@ public class Controller {
 		System.out.println("Errore: credenziali non valide.");
 		return false; // Rispondiamo alla GUI che il login è fallito
 	}
+		public Utente getUtenteLoggato() {
+		return this.utentelogg;
+	}
 		}
