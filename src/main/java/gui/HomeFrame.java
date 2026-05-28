@@ -26,11 +26,8 @@ public class HomeFrame extends JFrame {
         Utente utente = controller.getUtenteLoggato();
         lblBenvenuto.setText("Benvenuto "+utente.getNome()+" "+utente.getCognome());
 
-        if(utente instanceof Responsabile){
-            btnGestioneAule.setVisible(true);
-        } else{
-            btnGestioneAule.setVisible(false);
-        }
+        boolean mostraBottone = controller.puoGestireAule();
+        btnGestioneAule.setVisible(mostraBottone);
     }
 
 

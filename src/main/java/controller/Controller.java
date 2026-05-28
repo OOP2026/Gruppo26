@@ -56,6 +56,14 @@ public class Controller {
 		System.out.println("Errore: credenziali non valide.");
 		return false; // Rispondiamo alla GUI che il login è fallito
 	}
+	public boolean puoGestireAule() {
+		// Il controller controlla chi è l'utente loggato.
+		// Se è un Responsabile, restituisce true, altrimenti false.
+		if (this.utentelogg instanceof Responsabile) {
+			return true;
+		}
+		return false;
+	}
 		public Utente getUtenteLoggato() {
 		return this.utentelogg;
 	}

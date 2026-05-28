@@ -36,17 +36,10 @@ public class LoginFrame extends JFrame {
 
                 if (accessoconsentito) {
                     JOptionPane.showMessageDialog(MainPanel, "Accesso eseguito con successo!!");
-                } else {
-                    JOptionPane.showMessageDialog(MainPanel, "Credenziali non valide!");
-                }
-
-                if(accessoconsentito) {
-
-                    dispose();
-
+                    dispose(); // Chiudi il login
                     HomeFrame home = new HomeFrame(controller);
-                    home.setVisible(true);
-                } else{
+                    home.setVisible(true); // Apri la home
+                } else {
                     JOptionPane.showMessageDialog(MainPanel, "Credenziali non valide!", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
