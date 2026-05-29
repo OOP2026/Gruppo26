@@ -11,7 +11,7 @@ public class LoginFrame extends JFrame {
     private JPanel MainPanel;
     private JTextField textUsername;
     private JPasswordField txtPassword;
-    private JButton LOGINButton;
+    private JButton loginButton;
     private JCheckBox chkMostraPassword;
 
 
@@ -27,7 +27,7 @@ public class LoginFrame extends JFrame {
         setLocationRelativeTo(null);
 
 
-        LOGINButton.addActionListener(new ActionListener() {
+        loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = textUsername.getText();
