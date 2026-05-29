@@ -141,4 +141,43 @@ public class Controller {
 		return new String[]{"Data", "Orario", "Materia", "Aula", "Docente"};
 	}
 
+
+	public boolean inoltraRichiestaSpostamento(Lezione lezione, String data, String oraInizio, String oraFine) {
+		try{
+			java.time.LocalDate nuovaData =java.time.LocalDate.parse(data);
+			java.time.LocalTime nuovaOraInizio = java.time.LocalTime.parse(oraInizio);
+			java.time.LocalTime nuovaOraFine = java.time.LocalTime.parse(oraFine);
+
+			Docente docenteRichiedente = (Docente) this.utentelogg;
+
+			Responsabile responsabileDestinatario =null;
+			for(Utente u: this.utenti) {
+				if(u instanceof Responsabile) {
+					responsabileDestinatario = (Responsabile) u;
+					break;
+				}
+			}
+			if(responsabileDestinatario != null) {
+				docenteRichiedente.richiedispostamento(lezione , nuovaOraInizio, nuovaOraFine, nuovaData, responsabileDestinatario);
+				System.out.println("Controller: Richiesta inoltrata con successo.");
+				return true;
+			} else{
+				System.out.println("Controller: nessun responsabile trovato");
+				return false;
+			}
+
+        } catch (java.time.format.DateTimeParseException e){
+			System.out.println("Controller: formato data o ora non valido");
+			return false;
+		}
+	}
+
+	// Il metodo chiamato dalla HomeFrame quando l'Admin clicca "Gestione Aule"
+	public void apriGestioneAuleAdmin() {
+		System.out.println("Controller: Apertura pannello admin in corso...");
+
+		// Creiamo la finestrella e le passiamo "this" (ovvero questo stesso Controller)
+		gui.GestioneDialog dialog = new gui.GestioneDialog(this);
+		dialog.setVisible(true);
+	}
 }

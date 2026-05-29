@@ -16,6 +16,9 @@ public class SpostamentoDialog extends JDialog {
     private JButton btnInvia;
     private JButton btnAnnulla;
     private JLabel lblInfoLezione;
+    private JLabel lblOraFine;
+    private JLabel lblOraInizio;
+    private JLabel lblData;
 
     private Controller controller;
     private Lezione lezioneSelezionata;
@@ -41,6 +44,18 @@ public class SpostamentoDialog extends JDialog {
         btnInvia.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String nuovaData = txtData.getText();
+                String nuovaOraInizio = txtOraInizio.getText();
+                String nuovaOraFine = txtOraFine.getText();
+
+                boolean successo = controller.inoltraRichiestaSpostamento(lezioneSelezionata, nuovaData, nuovaOraInizio, nuovaOraFine);
+
+                if(successo) {
+                    JOptionPane.showMessageDialog(null, "Richiesta Spostamento con successo!");
+                    dispose();
+                } else  {
+                    JOptionPane.showMessageDialog(null, "Errore: controlla il formato di data (AAAA-MM-GG) e ora (HH:MM).", "Errore", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
     }

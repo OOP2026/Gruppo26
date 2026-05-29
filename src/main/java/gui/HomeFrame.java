@@ -63,6 +63,13 @@ public class HomeFrame extends JFrame {
         String[][] datiTabella = controller.getOrarioTabella();
         String[] colonneTabella = controller.getIntestazioniTabella();
 
+        btnGestioneAule.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.apriGestioneAuleAdmin();
+            }
+        });
+
         tableOrario.setModel(new DefaultTableModel(datiTabella, colonneTabella) {
             @Override
             public boolean isCellEditable(int row, int column) {
