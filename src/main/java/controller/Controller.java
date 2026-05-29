@@ -28,6 +28,7 @@ public class Controller {
 		this.aule.add(aula1);
 		this.aule.add(aula2);
 
+
 		Studente studente = new Studente("Pasquale", "Mazzocchi", "pm@università.it", "pasmaz", "pasmaz123", "1234567", 1);
 		this.utenti.add(studente);
 		Docente docente = new Docente("Enzo", "Rossi", "enzo.rossi@unipa.it", "docente", "pass456");
@@ -38,6 +39,47 @@ public class Controller {
 		responsabile.aggiungiAula(aula1);
 		responsabile.aggiungiAula(aula2);
 		this.utenti.add(responsabile);
+
+		Docente profBarra = new Docente("Silvio", "Barra", "silvio.barra@unipa.it", "sbarra", "barra123");
+		Insegnamento basiDiDati = new Insegnamento("Basi di Dati", 6, 2, profBarra);
+		this.utenti.add(profBarra);
+
+		Docente profTramontana = new Docente("Porfirio", "Tramontana", "porfirio.tramontana@unipa.it", "ptramontana", "poo123");
+		Insegnamento poo = new Insegnamento("Programmazione ad Oggetti", 9, 2, profTramontana);
+		this.utenti.add(profTramontana);
+
+		Docente profCutolo = new Docente("Giovanni", "Cutolo", "generoso.cutolo@unipa.it", "gcutolo", "algebra123");
+		Insegnamento algebra = new Insegnamento("Algebra", 6, 1, profCutolo);
+		this.utenti.add(profCutolo);
+
+		java.time.LocalDate oggi = java.time.LocalDate.now();
+
+		Lezione lez1 = new Lezione(
+				oggi,
+				java.time.LocalTime.of(9, 0),
+				java.time.LocalTime.of(11, 0),
+				basiDiDati,
+				aula1
+		);
+		Lezione lez2 = new Lezione(
+				oggi,
+				java.time.LocalTime.of(11, 0),
+				java.time.LocalTime.of(13, 0),
+				poo,
+				aula1
+		);
+		Lezione lez3 = new Lezione(
+				oggi.plusDays(1),
+				java.time.LocalTime.of(9, 0),
+				java.time.LocalTime.of(11, 0),
+				algebra,
+				aula2
+		);
+		this.orario.aggiungiLezione(lez1);
+		this.orario.aggiungiLezione(lez2);
+		this.orario.aggiungiLezione(lez3);
+
+
 	}
 
 	public boolean verificaLogin(String username, String password) {
@@ -45,22 +87,29 @@ public class Controller {
 			if (utente.eseguiLogin(username, password)) {
 				this.utentelogg = utente;
 				System.out.println("Login effettuato: Benvenuto " + utente.getNome());
-				return true; // Se lo trova, lo fa entrare e chiude tutto
+				return true;
 			}
 		}
 
 
 		System.out.println("Errore: credenziali non valide.");
-		return false; // Rispondiamo alla GUI che il login è fallito
+		return false;
 	}
-
 	public boolean puoGestireAule() {
 		if (this.utentelogg instanceof Responsabile) {
 			return true;
 		}
 		return false;
 	}
-
+	public boolean puoRichiedereSpostamento(){
+		if (this.utentelogg instanceof Responsabile) {
+			return false;
+		}
+		if(this.utentelogg instanceof Docente) {
+			return true;
+		}
+		return false;
+	}
 	public Utente getUtenteLoggato() {
 		return this.utentelogg;
 	}
@@ -69,7 +118,7 @@ public class Controller {
 		List<Lezione> listaLezioni = this.orario.getLezioni();
 
 		int numeroRighe = listaLezioni.size();
-		int numeroColonne = 5; // Abbiamo 5 informazioni: Data, Ora, Materia, Aula, Docente
+		int numeroColonne = 5;
 
 		String[][] matrice = new String[numeroRighe][numeroColonne];
 
@@ -85,8 +134,11 @@ public class Controller {
 
 		return matrice;
 	}
-
+	public Lezione getLezioneDaIndice(int indiceRiga) {
+		return this.orario.getLezioni().get(indiceRiga);
+	}
 	public String[] getIntestazioniTabella() {
 		return new String[]{"Data", "Orario", "Materia", "Aula", "Docente"};
 	}
+
 }
