@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Docente extends Utente {
-    private List<Insegnamento> insegnamenti=new ArrayList<Insegnamento>();
+    private List<Insegnamento> insegnamenti =new ArrayList<Insegnamento>();
     private List<Lezione> lezioni= new ArrayList<>();
     public Docente(String nome, String cognome, String email, String login, String password) {
         super(nome,cognome,email,login,password);

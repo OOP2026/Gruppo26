@@ -6,6 +6,7 @@ public class Utente {
     protected String email;
     protected String login;
     protected String password;
+    protected String ruolo;
 
     public Utente(String nome, String cognome, String email, String login, String password) {
         this.nome = nome;
@@ -33,4 +34,6 @@ public class Utente {
     public String getCognome() {
         return cognome;
     }
+
+    public String getLogin(){ return login; }
 }

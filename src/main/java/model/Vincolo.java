@@ -1,43 +1,27 @@
 package model;
 
-public class Vincolo {
-    protected String giorno;
-    protected String oraInizio;
-    protected String oraFine;
+import java.time.LocalTime;
 
+public class Vincolo{
+    private Docente docente;
+    private String giorno;
+    private LocalTime oraInizio;
+    private LocalTime oraFine;
+    private boolean approvato;
 
-    public Vincolo(String giorno, String oraInizio, String oraFine) {
+    public Vincolo(Docente docente, String giorno, LocalTime oraInizio, LocalTime oraFine) {
+        this.docente = docente;
         this.giorno = giorno;
         this.oraInizio = oraInizio;
         this.oraFine = oraFine;
-    }
-
-    // Metodo per verificare se un determinato orario si sovrappone a questo vincolo
-    public boolean controllaSovrapposizione(String giornoLezione, String inizioLezione, String fineLezione) {
-        if (this.giorno.equalsIgnoreCase(giornoLezione)) {
-            // Un controllo sulle stringhe orarie (es. "09:00", "11:00")
-            // Ritorna true se la lezione si sovrappone alla fascia protetta dal vincolo
-            return inizioLezione.compareTo(this.oraFine) < 0 && fineLezione.compareTo(this.oraInizio) > 0;
-        }
-        return false;
+        this.approvato = false;
     }
 
 
-    public String getGiorno() {
-        return giorno;
-    }
-
-    public String getOraInizio() {
-        return oraInizio;
-    }
-
-    public String getOraFine() {
-        return oraFine;
-    }
-
-
-    @Override
-    public String toString() {
-        return "Vincolo di indisponibilità: " + giorno + " dalle " + oraInizio + " alle " + oraFine;
-    }
+    public Docente getDocente() { return docente; }
+    public String getGiorno() { return giorno; }
+    public LocalTime getOraInizio() { return oraInizio; }
+    public LocalTime getOraFine() { return oraFine; }
+    public boolean isApprovato() { return approvato; }
+    public void setApprovato(boolean approvato) { this.approvato = approvato; }
 }

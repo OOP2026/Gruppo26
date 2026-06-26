@@ -2,36 +2,74 @@ package gui;
 
 import controller.Controller;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.table.DefaultTableModel;
 
 public class GestioneDialog extends JDialog {
+
     private JPanel mainPanel;
-    private JTextArea txtInfo;
-    private JButton btnChiudi;
+    private JTable tableRichieste;
+    private JButton btnApprova;
+    private JButton btnRifiuta;
 
-    public GestioneDialog(Controller controller) {
-        // --- PREPARAZIONE FINESTRA ---
+    private Controller controller;
+
+    // FIX WARN: aggiunto il parametro JFrame parent al costruttore.
+    // Prima veniva istanziato senza parent (dal Controller), causando
+    // possibili problemi di posizionamento e modalità del dialog.
+    public GestioneDialog(JFrame parent, Controller controller) {
+        // FIX: ora il dialog conosce il suo parent frame, garantendo
+        // comportamento modale corretto e posizionamento relativo alla finestra chiamante.
+        super(parent, "Pannello Admin - Gestione Richieste", true);
+        this.controller = controller;
+
         setContentPane(mainPanel);
-        setTitle("Pannello di Controllo - Responsabile");
-        setSize(400, 300);
-        setModal(true); // Rende la finestrella "bloccante" rispetto a quella sotto
-        setLocationRelativeTo(null);
+        setSize(700, 400);
+        setLocationRelativeTo(parent);
 
-        // --- SIMULAZIONE DATI DAL MODEL ---
-        // Qui stiamo dicendo al prof: "Guarda, so come stampare i dati a schermo!"
-        txtInfo.setText("--- RIEPILOGO AULE E RICHIESTE ---\n\n" +
-                "1. Aula Magna: Occupata (Ingegneria del Software)\n" +
-                "2. Aula B2: Libera\n" +
-                "3. Aula C3: In manutenzione\n\n" +
-                ">> Nessuna richiesta di spostamento da approvare al momento.");
-        txtInfo.setEditable(false); // Impediamo all'admin di scrivere qui dentro a caso
+        caricaDatiTabella();
 
-        // --- AZIONE BOTTONE CHIUDI ---
-        btnChiudi.addActionListener(new ActionListener() {
+        // MIGLIORAMENTO: lambda invece di classi anonime ActionListener
+        btnApprova.addActionListener(e -> {
+            int riga = tableRichieste.getSelectedRow();
+            if (riga == -1) {
+                JOptionPane.showMessageDialog(this, "Seleziona una richiesta dalla tabella.");
+                return;
+            }
+
+            boolean successo = controller.gestisciRichiestaDaIndice(riga, true);
+            if (successo) {
+                JOptionPane.showMessageDialog(this,
+                        "Richiesta Approvata! L'orario è stato aggiornato.",
+                        "Successo",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "ATTENZIONE: Conflitto Rilevato!\nAula occupata o docente impegnato. La richiesta è stata RIFIUTATA.",
+                        "Errore Conflitto",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            caricaDatiTabella();
+        });
+
+        btnRifiuta.addActionListener(e -> {
+            int riga = tableRichieste.getSelectedRow();
+            if (riga == -1) {
+                JOptionPane.showMessageDialog(this, "Seleziona una richiesta dalla tabella.");
+                return;
+            }
+            controller.gestisciRichiestaDaIndice(riga, false);
+            JOptionPane.showMessageDialog(this, "Richiesta rifiutata.");
+            caricaDatiTabella();
+        });
+    }
+
+    private void caricaDatiTabella() {
+        String[] colonne = controller.getIntestazioniRichieste();
+        String[][] dati = controller.getRichiesteTabella();
+        tableRichieste.setModel(new DefaultTableModel(dati, colonne) {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Chiude la finestrella e torna alla Home
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
         });
     }

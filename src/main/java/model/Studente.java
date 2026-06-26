@@ -1,5 +1,7 @@
 package model;
 
+
+
 public class Studente extends Utente {
     private String matricola;
     private int annoCorso;

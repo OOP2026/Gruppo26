@@ -1,19 +1,15 @@
 package gui;
 
 import controller.Controller;
-
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 
 public class LoginFrame extends JFrame {
+
     private JPanel MainPanel;
     private JTextField textUsername;
     private JPasswordField txtPassword;
     private JButton loginButton;
     private JCheckBox chkMostraPassword;
-
 
     private Controller controller;
 
@@ -26,34 +22,33 @@ public class LoginFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // MIGLIORAMENTO: lambda invece di classe anonima ActionListener
+        loginButton.addActionListener(e -> {
+            String username = textUsername.getText();
+            String password = new String(txtPassword.getPassword());
+            boolean accessoConsentito = controller.verificaLogin(username, password);
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = textUsername.getText();
-                String password = new String(txtPassword.getPassword());
-                boolean accessoconsentito = controller.verificaLogin(username, password);
-
-                if (accessoconsentito) {
-                    JOptionPane.showMessageDialog(MainPanel, "Accesso eseguito con successo!!");
-                    dispose();
-                    HomeFrame home = new HomeFrame(controller);
-                    home.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(MainPanel, "Credenziali non valide!", "Errore", JOptionPane.ERROR_MESSAGE);
-                }
+            if (accessoConsentito) {
+                JOptionPane.showMessageDialog(MainPanel, "Accesso eseguito con successo!");
+                dispose();
+                HomeFrame home = new HomeFrame(controller);
+                home.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(MainPanel,
+                        "Credenziali non valide!",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                // MIGLIORAMENTO: pulizia del campo password dopo un tentativo fallito
+                txtPassword.setText("");
             }
-
         });
 
-        chkMostraPassword.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(chkMostraPassword.isSelected()) {
-                    txtPassword.setEchoChar((char)0);
-                } else {
-                    txtPassword.setEchoChar('•');
-                }
+        // MIGLIORAMENTO: lambda invece di classe anonima ActionListener
+        chkMostraPassword.addActionListener(e -> {
+            if (chkMostraPassword.isSelected()) {
+                txtPassword.setEchoChar((char) 0);
+            } else {
+                txtPassword.setEchoChar('•');
             }
         });
     }

@@ -2,13 +2,10 @@ package gui;
 
 import controller.Controller;
 import model.Lezione;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class SpostamentoDialog extends JDialog {
+
     private JPanel mainPanel;
     private JTextField txtData;
     private JTextField txtOraInizio;
@@ -34,28 +31,40 @@ public class SpostamentoDialog extends JDialog {
 
         lblInfoLezione.setText("Stai spostando: " + lezione.getInsegnamento().getNomeInsegnamento());
 
-        btnAnnulla.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
+        // MIGLIORAMENTO: hint visivo nei campi per guidare l'utente sul formato atteso
+        txtData.setToolTipText("Formato: AAAA-MM-GG (es. 2025-06-15)");
+        txtOraInizio.setToolTipText("Formato: H:MM o HH:MM (es. 9:00 oppure 14:30)");
+        txtOraFine.setToolTipText("Formato: H:MM o HH:MM (es. 11:00 oppure 16:00)");
+
+        // MIGLIORAMENTO: lambda invece di classi anonime ActionListener
+        // FIX: rimosso il secondo "import javax.swing.*;" duplicato che era presente nell'originale
+        btnAnnulla.addActionListener(e -> dispose());
+
+        btnInvia.addActionListener(e -> {
+            String nuovaData = txtData.getText().trim();
+            String nuovaOraInizio = txtOraInizio.getText().trim();
+            String nuovaOraFine = txtOraFine.getText().trim();
+
+            // MIGLIORAMENTO: validazione campi vuoti prima di chiamare il controller
+            if (nuovaData.isEmpty() || nuovaOraInizio.isEmpty() || nuovaOraFine.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Compila tutti i campi prima di inviare la richiesta.",
+                        "Campi mancanti",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
             }
-        });
 
-        btnInvia.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nuovaData = txtData.getText();
-                String nuovaOraInizio = txtOraInizio.getText();
-                String nuovaOraFine = txtOraFine.getText();
+            boolean successo = controller.inoltraRichiestaSpostamento(
+                    lezioneSelezionata, nuovaData, nuovaOraInizio, nuovaOraFine);
 
-                boolean successo = controller.inoltraRichiestaSpostamento(lezioneSelezionata, nuovaData, nuovaOraInizio, nuovaOraFine);
-
-                if(successo) {
-                    JOptionPane.showMessageDialog(null, "Richiesta Spostamento con successo!");
-                    dispose();
-                } else  {
-                    JOptionPane.showMessageDialog(null, "Errore: controlla il formato di data (AAAA-MM-GG) e ora (HH:MM).", "Errore", JOptionPane.ERROR_MESSAGE);
-                }
+            if (successo) {
+                JOptionPane.showMessageDialog(this, "Richiesta di spostamento inoltrata con successo!");
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Errore: controlla il formato di data (AAAA-MM-GG) e ora (H:MM o HH:MM).",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
     }

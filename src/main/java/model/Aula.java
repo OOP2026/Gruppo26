@@ -7,4 +7,5 @@ public class Aula {
         this.nomeAula = nomeAula;
     }
     public String getNomeAula(){ return nomeAula; }
+
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.BachecaRichiesteDialog">
+  <grid id="cbd77" binding="contentPane" layout-manager="BorderLayout" hgap="10" vgap="10">
+    <constraints>
+      <xy x="48" y="54" width="750" height="450"/>
+    </constraints>
+    <properties/>
+    <border type="empty">
+      <size top="10" left="10" bottom="10" right="10"/>
+    </border>
+    <children>
+      <component id="e3b4a" class="javax.swing.JLabel" binding="lblInfo">
+        <constraints border-constraint="North"/>
+        <properties>
+          <font name="Arial" size="14" style="1"/>
+          <text value="Bacheca informativa per gli Studenti: monitoraggio dei cambiamenti orari"/>
+        </properties>
+      </component>
+      <tabbedpane id="8f2a1" binding="tabbedPane">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="1a2b3" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Spostamenti Richiesti"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="c1d2e">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="f3a12" class="javax.swing.JTable" binding="tableSpostamenti"/>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+          <grid id="4c5d6" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <tabbedpane title="Vincoli e Indisponibilità Docenti"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="e2f1a">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="b4c5d" class="javax.swing.JTable" binding="tableVincoli"/>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+        </children>
+      </tabbedpane>
+      <grid id="7e8f9" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="a1b2c" class="javax.swing.JButton" binding="btnChiudi">
+            <constraints/>
+            <properties>
+              <text value="Chiudi"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
