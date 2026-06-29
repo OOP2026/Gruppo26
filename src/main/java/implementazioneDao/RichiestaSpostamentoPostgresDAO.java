@@ -1,4 +1,4 @@
-package postgres;
+package implementazioneDao;
 
 import dao.RichiestaSpostamentoDAO;
 import database_connection.ConnessioneDatabase;
