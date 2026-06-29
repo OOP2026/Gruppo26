@@ -2,15 +2,23 @@ package dao;
 
 import model.Vincolo;
 import java.util.List;
+import java.util.Optional;
 
 public interface VincoloDAO {
 
-    boolean inserisciVincolo(Vincolo vincolo);
+    List<Vincolo> trovaTutti();
 
-    List<Vincolo> getAllVincoli();
+    List<Vincolo> trovaPerDocente(String loginDocente);
 
-    boolean aggiornaVincolo(Vincolo vincolo);
+    List<Vincolo> trovaApprovati();
 
-    boolean eliminaVincolo(Vincolo vincolo);
+    Optional<Vincolo> trovaPerID(int id);
 
+    int contaPerDocente(String loginDocente);
+
+    boolean inserisci(Vincolo vincolo);
+
+    boolean aggiornaApprovazione(int id, boolean approvato);
+
+    boolean elimina(int id);
 }
