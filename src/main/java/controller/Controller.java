@@ -2,7 +2,7 @@ package controller;
 
 import dao.*;
 import model.*;
-import postgres.RichiestaSpostamentoPostgresDAO;
+import implementazioneDao.RichiestaSpostamentoPostgresDAO;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -19,9 +19,9 @@ public class Controller {
 	private Utente utentelogg;
 
 	public Controller() {
-		this.utenteDAO    = new dao.postgres.UtentePostgresDAO();
-		this.lezioneDAO   = new dao.postgres.LezionePostgresDAO();
-		this.vincoloDAO   = new dao.postgres.VincoloPostgresDAO();
+		this.utenteDAO    = new implementazioneDao.UtentePostgresDAO();
+		this.lezioneDAO   = new implementazioneDao.LezionePostgresDAO();
+		this.vincoloDAO   = new implementazioneDao.VincoloPostgresDAO();
 		this.richiestaDAO = new RichiestaSpostamentoPostgresDAO();
 		this.utentelogg   = null;
 		this.orario       = new OrarioLezione(new java.util.ArrayList<>());
@@ -243,16 +243,18 @@ public class Controller {
 	public void approvaVincoloDaIndice(int indice) {
 		List<Vincolo> vincoli = vincoloDAO.trovaTutti();
 		if (indice >= 0 && indice < vincoli.size()) {
-			vincoloDAO.aggiornaApprovazione(indice + 1, true);
-			System.out.println("Controller: Vincolo approvato sul DB.");
+			int idReale = vincoli.get(indice).getId();
+			vincoloDAO.aggiornaApprovazione(idReale, true);
+			System.out.println("Controller: Vincolo approvato sul DB (id=" + idReale + ").");
 		}
 	}
 
 	public void rifiutaVincoloDaIndice(int indice) {
 		List<Vincolo> vincoli = vincoloDAO.trovaTutti();
 		if (indice >= 0 && indice < vincoli.size()) {
-			vincoloDAO.elimina(indice + 1);
-			System.out.println("Controller: Vincolo eliminato dal DB.");
+			int idReale = vincoli.get(indice).getId();
+			vincoloDAO.elimina(idReale);
+			System.out.println("Controller: Vincolo eliminato dal DB (id=" + idReale + ").");
 		}
 	}
 
