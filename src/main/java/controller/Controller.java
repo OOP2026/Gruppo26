@@ -1,355 +1,266 @@
 package controller;
 
+import dao.*;
 import model.*;
+import postgres.RichiestaSpostamentoPostgresDAO;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
 
 public class Controller {
 
-    private List<Utente> utenti;
-    private List<Lezione> lezioni;
-    private List<Aula> aule;
-    private List<Vincolo> vincoli;
-    private OrarioLezione orario;
-    private Utente utentelogg;
+	private final UtenteDAO               utenteDAO;
+	private final LezioneDAO              lezioneDAO;
+	private final VincoloDAO              vincoloDAO;
+	private final RichiestaSpostamentoDAO richiestaDAO;
 
-    public Controller() {
-        this.utenti = new ArrayList<>();
-        this.aule = new ArrayList<>();
-        this.lezioni = new ArrayList<>();
-        this.orario = new OrarioLezione(lezioni);
-        this.utentelogg = null;
-        this.vincoli = new ArrayList<>();
-        this.inizializzadati();
-    }
+	private OrarioLezione orario;
+	private Utente utentelogg;
 
-    private void inizializzadati() {
-        Aula aula1 = new Aula("Aula1");
-        Aula aula2 = new Aula("Aula2");
-        this.aule.add(aula1);
-        this.aule.add(aula2);
+	public Controller() {
+		this.utenteDAO    = new dao.postgres.UtentePostgresDAO();
+		this.lezioneDAO   = new dao.postgres.LezionePostgresDAO();
+		this.vincoloDAO   = new dao.postgres.VincoloPostgresDAO();
+		this.richiestaDAO = new RichiestaSpostamentoPostgresDAO();
+		this.utentelogg   = null;
+		this.orario       = new OrarioLezione(new java.util.ArrayList<>());
+		ricaricaOrarioDalDB();
+	}
 
-        Studente studente = new Studente("Pasquale", "Mazzocchi", "pm@università.it", "pasmaz", "pasmaz123", "1234567", 1);
-        this.utenti.add(studente);
+	private void ricaricaOrarioDalDB() {
+		List<Lezione> lezioniDB = lezioneDAO.trovaTutte();
+		System.out.println("Controller: lezioni caricate dal DB: " + lezioniDB.size());
+		this.orario.getLezioni().clear();
+		this.orario.getLezioni().addAll(lezioniDB);
+	}
 
-        Docente docente = new Docente("Enzo", "Rossi", "enzo.rossi@unipa.it", "docente", "pass456");
-        this.utenti.add(docente);
+	private Responsabile getResponsabile() {
+		for (Utente u : utenteDAO.trovaTutti()) {
+			if (u instanceof Responsabile) {
+				((Responsabile) u).setOrario(this.orario);
+				return (Responsabile) u;
+			}
+		}
+		return null;
+	}
 
-        // FIX CRITICO: rimosso il primo utenti.add(responsabile) che causava un duplicato.
-        // Il responsabile viene aggiunto una sola volta, dopo che le aule sono state assegnate.
-        Responsabile responsabile = new Responsabile("Anna", "Bianchi", "anna.bianchi@unipa.it", "admin", "admin123", this.orario);
-        responsabile.aggiungiAula(aula1);
-        responsabile.aggiungiAula(aula2);
-        this.utenti.add(responsabile);
+	public boolean verificaLogin(String username, String password) {
+		Optional<Utente> risultato = utenteDAO.verificaCredenziali(username, password);
+		if (risultato.isPresent()) {
+			this.utentelogg = risultato.get();
+			if (this.utentelogg instanceof Responsabile)
+				((Responsabile) this.utentelogg).setOrario(this.orario);
+			System.out.println("Login effettuato: Benvenuto " + utentelogg.getNome());
+			return true;
+		}
+		System.out.println("Errore: credenziali non valide.");
+		return false;
+	}
 
-        Docente profBarra = new Docente("Silvio", "Barra", "silvio.barra@unipa.it", "sbarra", "barra123");
-        Insegnamento basiDiDati = new Insegnamento("Basi di Dati", 6, 2, profBarra);
-        this.utenti.add(profBarra);
+	public void logout() {
+		System.out.println("Logout effettuato per: " +
+				(utentelogg != null ? utentelogg.getNome() : "nessuno"));
+		this.utentelogg = null;
+	}
 
-        Docente profTramontana = new Docente("Porfirio", "Tramontana", "porfirio.tramontana@unipa.it", "ptramontana", "poo123");
-        Insegnamento poo = new Insegnamento("Programmazione ad Oggetti", 9, 2, profTramontana);
-        this.utenti.add(profTramontana);
+	public boolean puoGestireAule()          { return this.utentelogg instanceof Responsabile; }
+	public boolean puoRichiedereSpostamento() {
+		return (this.utentelogg instanceof Docente) && !(this.utentelogg instanceof Responsabile);
+	}
+	public Utente getUtenteLoggato() { return this.utentelogg; }
 
-        Docente profCutolo = new Docente("Giovanni", "Cutolo", "generoso.cutolo@unipa.it", "gcutolo", "algebra123");
-        Insegnamento algebra = new Insegnamento("Algebra", 6, 1, profCutolo);
-        this.utenti.add(profCutolo);
+	public String[][] getOrarioTabella() {
+		ricaricaOrarioDalDB();
+		List<Lezione> lista = this.orario.getLezioni();
+		String[][] matrice  = new String[lista.size()][5];
+		for (int i = 0; i < lista.size(); i++) {
+			Lezione l     = lista.get(i);
+			matrice[i][0] = l.getGiorno().toString();
+			matrice[i][1] = l.getOraInizio() + " - " + l.getOraFine();
+			matrice[i][2] = l.getInsegnamento().getNomeInsegnamento();
+			matrice[i][3] = l.getAula().getNomeAula();
+			matrice[i][4] = l.getInsegnamento().getDocente().getCognome();
+		}
+		return matrice;
+	}
 
-        java.time.LocalDate oggi = java.time.LocalDate.now();
+	public Lezione getLezioneDaIndice(int indice) { return this.orario.getLezioni().get(indice); }
+	public String[] getIntestazioniTabella()      { return new String[]{"Data","Orario","Materia","Aula","Docente"}; }
 
-        Lezione lez1 = new Lezione(
-                oggi,
-                java.time.LocalTime.of(9, 0),
-                java.time.LocalTime.of(11, 0),
-                basiDiDati,
-                aula1
-        );
-        Lezione lez2 = new Lezione(
-                oggi,
-                java.time.LocalTime.of(11, 0),
-                java.time.LocalTime.of(13, 0),
-                poo,
-                aula1
-        );
-        Lezione lez3 = new Lezione(
-                oggi.plusDays(1),
-                java.time.LocalTime.of(9, 0),
-                java.time.LocalTime.of(11, 0),
-                algebra,
-                aula2
-        );
-        this.orario.aggiungiLezione(lez1);
-        this.orario.aggiungiLezione(lez2);
-        this.orario.aggiungiLezione(lez3);
-    }
+	public boolean inoltraRichiestaSpostamento(Lezione lezione, String data, String oraInizio, String oraFine) {
+		if (!(this.utentelogg instanceof Docente) || this.utentelogg instanceof Responsabile) {
+			System.out.println("Controller: Solo un docente può richiedere uno spostamento.");
+			return false;
+		}
+		try {
+			java.time.LocalDate nuovaData      = java.time.LocalDate.parse(data);
+			java.time.LocalTime nuovaOraInizio = java.time.LocalTime.parse(oraInizio);
+			java.time.LocalTime nuovaOraFine   = java.time.LocalTime.parse(oraFine);
 
-    // MIGLIORAMENTO: metodo privato per recuperare il Responsabile,
-    // elimina la ricerca lineare duplicata in 4 metodi diversi.
-    private Responsabile getResponsabile() {
-        for (Utente u : this.utenti) {
-            if (u instanceof Responsabile) {
-                return (Responsabile) u;
-            }
-        }
-        return null;
-    }
+			Responsabile resp = getResponsabile();
+			if (resp == null) { System.out.println("Controller: nessun responsabile trovato."); return false; }
 
-    public boolean verificaLogin(String username, String password) {
-        for (Utente utente : this.utenti) {
-            if (utente.eseguiLogin(username, password)) {
-                this.utentelogg = utente;
-                System.out.println("Login effettuato: Benvenuto " + utente.getNome());
-                return true;
-            }
-        }
-        System.out.println("Errore: credenziali non valide.");
-        return false;
-    }
+			Docente doc = (Docente) this.utentelogg;
+			doc.richiedispostamento(lezione, nuovaOraInizio, nuovaOraFine, nuovaData, resp);
 
-    // MIGLIORAMENTO: metodo di logout per resettare lo stato dell'utente loggato.
-    // Evita che, dopo il logout, l'utente precedente rimanga in memoria.
-    public void logout() {
-        System.out.println("Logout effettuato per: " + (utentelogg != null ? utentelogg.getNome() : "nessuno"));
-        this.utentelogg = null;
-    }
 
-    // MIGLIORAMENTO: semplificato con return diretto dell'espressione booleana.
-    public boolean puoGestireAule() {
-        return this.utentelogg instanceof Responsabile;
-    }
+			List<RichiestaSpostamento> richieste = resp.getRichieste();
+			RichiestaSpostamento ultima = richieste.get(richieste.size() - 1);
+			boolean salvata = richiestaDAO.inserisci(ultima);
+			if (!salvata) System.out.println("Controller: attenzione – richiesta non persistita sul DB.");
+			return salvata;
 
-    // MIGLIORAMENTO: semplificato con return diretto dell'espressione booleana.
-    // Un Responsabile non è un Docente generico: può gestire ma non richiedere spostamenti.
-    public boolean puoRichiedereSpostamento() {
-        return (this.utentelogg instanceof Docente) && !(this.utentelogg instanceof Responsabile);
-    }
+		} catch (java.time.format.DateTimeParseException e) {
+			System.out.println("Controller: formato data o ora non valido.");
+			return false;
+		}
+	}
 
-    public Utente getUtenteLoggato() {
-        return this.utentelogg;
-    }
+	public String[][] getRichiesteTabella() {
+		return costruisciMatriceRichieste(richiestaDAO.trovaTutte());
+	}
 
-    public String[][] getOrarioTabella() {
-        List<Lezione> listaLezioni = this.orario.getLezioni();
-        int numeroRighe = listaLezioni.size();
-        String[][] matrice = new String[numeroRighe][5];
+	public String[][] getRichiesteTabellaPubblica() {
+		return costruisciMatriceRichieste(richiestaDAO.trovaTutte());
+	}
 
-        for (int i = 0; i < numeroRighe; i++) {
-            Lezione lezioneCorrente = listaLezioni.get(i);
-            matrice[i][0] = lezioneCorrente.getGiorno().toString();
-            matrice[i][1] = lezioneCorrente.getOraInizio() + " - " + lezioneCorrente.getOraFine();
-            matrice[i][2] = lezioneCorrente.getInsegnamento().getNomeInsegnamento();
-            matrice[i][3] = lezioneCorrente.getAula().getNomeAula();
-            matrice[i][4] = lezioneCorrente.getInsegnamento().getDocente().getCognome();
-        }
+	private String[][] costruisciMatriceRichieste(List<RichiestaSpostamento> list) {
+		String[][] matrice = new String[list.size()][6];
+		for (int i = 0; i < list.size(); i++) {
+			RichiestaSpostamento r = list.get(i);
+			matrice[i][0] = r.getLezioneRichiesta().getInsegnamento().getNomeInsegnamento();
+			matrice[i][1] = r.getLezioneRichiesta().getInsegnamento().getDocente().getCognome();
+			matrice[i][2] = r.getDataRichiesta().toString();
+			matrice[i][3] = r.getOrarioInizioRichiesta() + " - " + r.getOrarioFineRichiesta();
+			matrice[i][4] = r.getLezioneRichiesta().getAula().getNomeAula();
+			matrice[i][5] = r.getStatoRichiesta().toString();
+		}
+		return matrice;
+	}
 
-        return matrice;
-    }
+	public String[] getIntestazioniRichieste() {
+		return new String[]{"Materia","Docente","Nuova Data","Nuovo Orario","Aula","Stato"};
+	}
 
-    public Lezione getLezioneDaIndice(int indiceRiga) {
-        return this.orario.getLezioni().get(indiceRiga);
-    }
+	public boolean gestisciRichiestaDaIndice(int indice, boolean approva) {
+		if (!(this.utentelogg instanceof Responsabile)) return false;
 
-    public String[] getIntestazioniTabella() {
-        return new String[]{"Data", "Orario", "Materia", "Aula", "Docente"};
-    }
+		Responsabile resp = (Responsabile) this.utentelogg;
 
-    public boolean inoltraRichiestaSpostamento(Lezione lezione, String data, String oraInizio, String oraFine) {
-        // FIX CRITICO: controllo esplicito del tipo prima del cast per evitare ClassCastException.
-        if (!(this.utentelogg instanceof Docente) || this.utentelogg instanceof Responsabile) {
-            System.out.println("Controller: Solo un docente può richiedere uno spostamento.");
-            return false;
-        }
+		List<RichiestaSpostamento> richieste = richiestaDAO.trovaTutte();
 
-        try {
-            java.time.LocalDate nuovaData = java.time.LocalDate.parse(data);
-            java.time.LocalTime nuovaOraInizio = java.time.LocalTime.parse(oraInizio);
-            java.time.LocalTime nuovaOraFine = java.time.LocalTime.parse(oraFine);
+		if (indice < 0 || indice >= richieste.size()) {
+			System.out.println("Controller: indice richiesta non valido.");
+			return false;
+		}
 
-            Docente docenteRichiedente = (Docente) this.utentelogg;
+		RichiestaSpostamento richiesta = richieste.get(indice);
+		int idRealeDB = richiesta.getId(); // ID reale letto dal DB
+		System.out.println("Controller: gestendo richiesta con id_richiesta=" + idRealeDB);
 
-            // MIGLIORAMENTO: usa il metodo centralizzato getResponsabile().
-            Responsabile responsabileDestinatario = getResponsabile();
-            if (responsabileDestinatario != null) {
-                docenteRichiedente.richiedispostamento(lezione, nuovaOraInizio, nuovaOraFine, nuovaData, responsabileDestinatario);
-                System.out.println("Controller: Richiesta inoltrata con successo.");
-                return true;
-            } else {
-                System.out.println("Controller: nessun responsabile trovato.");
-                return false;
-            }
+		if (approva) {
+			resp.getRichieste().clear();
+			resp.getRichieste().addAll(richieste);
+			boolean esito = resp.gestisciRichiesta(richiesta);
 
-        } catch (java.time.format.DateTimeParseException e) {
-            System.out.println("Controller: formato data o ora non valido.");
-            return false;
-        }
-    }
+			RichiestaSpostamento.StatoRichiesta nuovoStato = esito
+					? RichiestaSpostamento.StatoRichiesta.APPROVATA
+					: RichiestaSpostamento.StatoRichiesta.RIFIUTATA;
 
-    public void apriGestioneAuleAdmin() {
-        System.out.println("Controller: Apertura pannello admin in corso...");
-        gui.GestioneDialog dialog = new gui.GestioneDialog(this);
-        dialog.setVisible(true);
-    }
+			richiestaDAO.aggiornaStato(idRealeDB, nuovoStato);
 
-    public boolean inoltraRichiestaVincolo(String giorno, String oraInizio, String oraFine) {
-        // FIX CRITICO: controllo esplicito del tipo prima del cast per evitare ClassCastException.
-        if (!(this.utentelogg instanceof Docente) || this.utentelogg instanceof Responsabile) {
-            System.out.println("Controller: Solo un docente può inserire vincoli.");
-            return false;
-        }
+			if (esito) {
+				Lezione lezMod = richiesta.getLezioneRichiesta();
+				List<Lezione> tutteLezioni = lezioneDAO.trovaTutte();
+				for (Lezione l : tutteLezioni) {
+					if (l.getInsegnamento().getNomeInsegnamento()
+							.equals(lezMod.getInsegnamento().getNomeInsegnamento())) {
+						lezMod.setId(l.getId());
+						lezioneDAO.aggiorna(l.getId(), lezMod);
+						System.out.println("Controller: lezione aggiornata sul DB con id=" + l.getId());
+						break;
+					}
+				}
+				ricaricaOrarioDalDB();
+			}
+			return esito;
 
-        try {
-            // MIGLIORAMENTO: formatter più robusto che accetta sia "9:00" che "09:00".
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
-            java.time.LocalTime inizio = java.time.LocalTime.parse(oraInizio, formatter);
-            java.time.LocalTime fine = java.time.LocalTime.parse(oraFine, formatter);
+		} else {
+			richiesta.setStato(RichiestaSpostamento.StatoRichiesta.RIFIUTATA);
+			richiestaDAO.aggiornaStato(idRealeDB, RichiestaSpostamento.StatoRichiesta.RIFIUTATA);
+			return true;
+		}
+	}
 
-            Docente docenteRichiedente = (Docente) this.utentelogg;
+	public boolean inoltraRichiestaVincolo(String giorno, String oraInizio, String oraFine) {
+		if (!(this.utentelogg instanceof Docente) || this.utentelogg instanceof Responsabile) {
+			System.out.println("Controller: Solo un docente può inserire vincoli.");
+			return false;
+		}
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
+			java.time.LocalTime inizio = java.time.LocalTime.parse(oraInizio, formatter);
+			java.time.LocalTime fine   = java.time.LocalTime.parse(oraFine,   formatter);
 
-            long conteggioVincoli = this.vincoli.stream()
-                    .filter(v -> v.getDocente().getLogin().equals(docenteRichiedente.getLogin()))
-                    .count();
+			Docente doc = (Docente) this.utentelogg;
+			if (vincoloDAO.contaPerDocente(doc.getLogin()) >= 3) {
+				System.out.println("Controller: Limite massimo di 3 vincoli raggiunto.");
+				return false;
+			}
 
-            if (conteggioVincoli >= 3) {
-                System.out.println("Controller: Errore! Hai già raggiunto il limite massimo di 3 vincoli.");
-                return false;
-            }
+			Vincolo nuovoVincolo = new Vincolo(doc, giorno, inizio, fine);
+			boolean salvato = vincoloDAO.inserisci(nuovoVincolo);
+			if (salvato) System.out.println("Controller: Vincolo inserito sul DB.");
+			return salvato;
 
-            Vincolo nuovoVincolo = new Vincolo(docenteRichiedente, giorno, inizio, fine);
-            this.vincoli.add(nuovoVincolo);
-            System.out.println("Controller: Richiesta di vincolo inoltrata con successo.");
-            return true;
+		} catch (java.time.format.DateTimeParseException e) {
+			System.out.println("Controller: Formato ora non valido (usa H:MM o HH:MM).");
+			return false;
+		}
+	}
 
-        } catch (java.time.format.DateTimeParseException e) {
-            System.out.println("Controller: Formato ora non valido (usa H:MM o HH:MM).");
-            return false;
-        }
-    }
+	public String[][] getVincoliTabella()        { return costruisciMatriceVincoli(vincoloDAO.trovaTutti()); }
+	public String[][] getVincoliTabellaPubblica() { return costruisciMatriceVincoli(vincoloDAO.trovaTutti()); }
 
-    public String[][] getVincoliTabella() {
-        int numeroRighe = this.vincoli.size();
-        String[][] matrice = new String[numeroRighe][5];
+	private String[][] costruisciMatriceVincoli(List<Vincolo> vincoli) {
+		String[][] matrice = new String[vincoli.size()][5];
+		for (int i = 0; i < vincoli.size(); i++) {
+			Vincolo v     = vincoli.get(i);
+			matrice[i][0] = v.getDocente().getCognome() + " " + v.getDocente().getNome();
+			matrice[i][1] = v.getGiorno();
+			matrice[i][2] = v.getOraInizio().toString();
+			matrice[i][3] = v.getOraFine().toString();
+			matrice[i][4] = v.isApprovato() ? "Approvato" : "In attesa";
+		}
+		return matrice;
+	}
 
-        for (int i = 0; i < numeroRighe; i++) {
-            Vincolo v = this.vincoli.get(i);
-            matrice[i][0] = v.getDocente().getCognome() + " " + v.getDocente().getNome();
-            matrice[i][1] = v.getGiorno();
-            matrice[i][2] = v.getOraInizio().toString();
-            matrice[i][3] = v.getOraFine().toString();
-            matrice[i][4] = v.isApprovato() ? "Approvato" : "In attesa";
-        }
-        return matrice;
-    }
+	public String[] getIntestazioniVincoli() {
+		return new String[]{"Docente","Giorno/Data","Ora Inizio","Ora Fine","Stato"};
+	}
 
-    public String[] getIntestazioniVincoli() {
-        return new String[]{"Docente", "Giorno/Data", "Ora Inizio", "Ora Fine", "Stato"};
-    }
+	public void approvaVincoloDaIndice(int indice) {
+		List<Vincolo> vincoli = vincoloDAO.trovaTutti();
+		if (indice >= 0 && indice < vincoli.size()) {
+			vincoloDAO.aggiornaApprovazione(indice + 1, true);
+			System.out.println("Controller: Vincolo approvato sul DB.");
+		}
+	}
 
-    public void approvaVincoloDaIndice(int indiceRiga) {
-        if (indiceRiga >= 0 && indiceRiga < this.vincoli.size()) {
-            this.vincoli.get(indiceRiga).setApprovato(true);
-            System.out.println("Controller: Vincolo approvato con successo.");
-        }
-    }
+	public void rifiutaVincoloDaIndice(int indice) {
+		List<Vincolo> vincoli = vincoloDAO.trovaTutti();
+		if (indice >= 0 && indice < vincoli.size()) {
+			vincoloDAO.elimina(indice + 1);
+			System.out.println("Controller: Vincolo eliminato dal DB.");
+		}
+	}
 
-    public String[][] getRichiesteTabella() {
-        // MIGLIORAMENTO: usa getResponsabile() invece di ripetere la ricerca.
-        Responsabile resp = getResponsabile();
-
-        if (resp != null) {
-            List<RichiestaSpostamento> list = resp.getRichieste();
-            String[][] matrice = new String[list.size()][6];
-            for (int i = 0; i < list.size(); i++) {
-                RichiestaSpostamento r = list.get(i);
-                matrice[i][0] = r.getLezioneRichiesta().getInsegnamento().getNomeInsegnamento();
-                matrice[i][1] = r.getLezioneRichiesta().getInsegnamento().getDocente().getCognome();
-                matrice[i][2] = r.getDataRichiesta().toString();
-                matrice[i][3] = r.getOrarioInizioRichiesta().toString() + " - " + r.getOrarioFineRichiesta().toString();
-                matrice[i][4] = r.getLezioneRichiesta().getAula().getNomeAula();
-                matrice[i][5] = r.getStatoRichiesta().toString();
-            }
-            return matrice;
-        }
-        return new String[0][0];
-    }
-
-    public String[] getIntestazioniRichieste() {
-        return new String[]{"Materia", "Docente", "Nuova Data", "Nuovo Orario", "Aula", "Stato"};
-    }
-
-    public boolean gestisciRichiestaDaIndice(int indice, boolean approva) {
-        if (!(this.utentelogg instanceof Responsabile)) {
-            return false;
-        }
-
-        Responsabile resp = (Responsabile) this.utentelogg;
-        List<RichiestaSpostamento> richieste = resp.getRichieste();
-
-        // FIX CRITICO: aggiunto bounds check per evitare IndexOutOfBoundsException.
-        if (indice < 0 || indice >= richieste.size()) {
-            System.out.println("Controller: indice richiesta non valido.");
-            return false;
-        }
-
-        RichiestaSpostamento richiesta = richieste.get(indice);
-
-        if (approva) {
-            return resp.gestisciRichiesta(richiesta);
-        } else {
-            richiesta.setStato(RichiestaSpostamento.StatoRichiesta.RIFIUTATA);
-            return true;
-        }
-    }
-
-    public String[][] getRichiesteTabellaPubblica() {
-        // MIGLIORAMENTO: usa getResponsabile() invece di ripetere la ricerca.
-        Responsabile responsabileDiTurno = getResponsabile();
-
-        if (responsabileDiTurno != null) {
-            List<RichiestaSpostamento> list = responsabileDiTurno.getRichieste();
-            String[][] matrice = new String[list.size()][6];
-
-            for (int i = 0; i < list.size(); i++) {
-                RichiestaSpostamento r = list.get(i);
-                matrice[i][0] = r.getLezioneRichiesta().getInsegnamento().getNomeInsegnamento();
-                matrice[i][1] = r.getLezioneRichiesta().getInsegnamento().getDocente().getCognome();
-                matrice[i][2] = r.getDataRichiesta().toString();
-                matrice[i][3] = r.getOrarioInizioRichiesta().toString() + " - " + r.getOrarioFineRichiesta().toString();
-                matrice[i][4] = r.getLezioneRichiesta().getAula().getNomeAula();
-                matrice[i][5] = r.getStatoRichiesta().toString();
-            }
-            return matrice;
-        }
-
-        return new String[0][0];
-    }
-
-    public String[][] getVincoliTabellaPubblica() {
-        String[][] matrice = new String[vincoli.size()][5];
-        for (int i = 0; i < vincoli.size(); i++) {
-            Vincolo v = vincoli.get(i);
-            matrice[i][0] = v.getDocente().getCognome();
-            matrice[i][1] = v.getGiorno();
-            matrice[i][2] = v.getOraInizio().toString();
-            matrice[i][3] = v.getOraFine().toString();
-            matrice[i][4] = v.isApprovato() ? "Approvato" : "In attesa";
-        }
-        return matrice;
-    }
-
-    public void rifiutaVincoloDaIndice(int indice) {
-        if (indice >= 0 && indice < this.vincoli.size()) {
-            this.vincoli.remove(indice);
-            System.out.println("Controller: Vincolo rifiutato ed eliminato.");
-        }
-    }
-
-    public String[] getVincoliApprovatiPerStudente() {
-        return this.vincoli.stream()
-                .filter(Vincolo::isApprovato)
-                .map(v -> "Docente: " + v.getDocente().getCognome() +
-                        " - Giorno: " + v.getGiorno() +
-                        " (" + v.getOraInizio() + "-" + v.getOraFine() + ")")
-                .toArray(String[]::new);
-    }
+	public String[] getVincoliApprovatiPerStudente() {
+		return vincoloDAO.trovaApprovati().stream()
+				.map(v -> "Docente: " + v.getDocente().getCognome() +
+						" - Giorno: " + v.getGiorno() +
+						" (" + v.getOraInizio() + "-" + v.getOraFine() + ")")
+				.toArray(String[]::new);
+	}
 }
