@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Lezione {
+    private int Id;
     private LocalDate giorno;
     private LocalTime oraInizio;
     private LocalTime oraFine;
@@ -18,6 +19,9 @@ public class Lezione {
         this.aula=aula;
     }
 
+
+    public int getId() { return Id; }
+    public void setId(int Id){ this.Id = Id; } // FIX: prima veniva sempre forzato a -1, ignorando il parametro
     public LocalDate getGiorno() {return giorno;}
     public LocalTime getOraInizio() {return oraInizio;}
     public LocalTime getOraFine() {return oraFine;}

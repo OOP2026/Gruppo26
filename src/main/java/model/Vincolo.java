@@ -3,6 +3,7 @@ package model;
 import java.time.LocalTime;
 
 public class Vincolo{
+    private int id = -1;
     private Docente docente;
     private String giorno;
     private LocalTime oraInizio;
@@ -17,6 +18,8 @@ public class Vincolo{
         this.approvato = false;
     }
 
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
     public Docente getDocente() { return docente; }
     public String getGiorno() { return giorno; }
