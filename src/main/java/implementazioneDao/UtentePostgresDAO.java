@@ -49,8 +49,7 @@ public class UtentePostgresDAO implements UtenteDAO {
                 return new Docente(nome, cognome, email, login, password);
 
             case "RESPONSABILE":
-                // Il Responsabile necessita di un OrarioLezione: viene passato null
-                // e valorizzato successivamente dal Controller, che detiene l'istanza condivisa.
+
                 return new Responsabile(nome, cognome, email, login, password, null);
 
             default:
@@ -121,9 +120,6 @@ public class UtentePostgresDAO implements UtenteDAO {
             ps.setString(3, utente.getNome());
             ps.setString(4, utente.getCognome());
             ps.setString(5, "");  // email — da valorizzare se si aggiunge getEmail() in Utente
-            ps.setString(3, utente.getNome());
-            ps.setString(4, utente.getCognome());
-            ps.setString(5, "");   // da valorizzare se si aggiunge getEmail() in Utente
 
             String ruolo;
             String matricola = null;

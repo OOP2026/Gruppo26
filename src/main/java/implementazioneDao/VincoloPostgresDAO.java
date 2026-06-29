@@ -30,7 +30,7 @@ public class VincoloPostgresDAO implements VincoloDAO {
 
     private static final String SQL_INSERISCI =
             "INSERT INTO vincoli (login_docente, giorno, ora_inizio, ora_fine, approvato) " +
-                    "VALUES (?, ?, ?, ?, FALSE)";
+                    "VALUES (?, ?, ?, ?, FALSE) RETURNING id_vincolo";
 
     private static final String SQL_AGGIORNA_APPROVAZIONE =
             "UPDATE vincoli SET approvato = ? WHERE id_vincolo = ?";
@@ -55,6 +55,7 @@ public class VincoloPostgresDAO implements VincoloDAO {
 
         Vincolo v = new Vincolo(docente, giorno, oraInizio, oraFine);
         v.setApprovato(approvato);
+        v.setId(rs.getInt("id_vincolo")); // FIX: salva l'id reale del DB, prima andava perso
         return v;
     }
 
@@ -144,7 +145,13 @@ public class VincoloPostgresDAO implements VincoloDAO {
             ps.setTime  (3, Time.valueOf(vincolo.getOraInizio()));
             ps.setTime  (4, Time.valueOf(vincolo.getOraFine()));
 
-            return ps.executeUpdate() > 0;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    vincolo.setId(rs.getInt("id_vincolo")); // FIX: salva l'id generato nell'oggetto
+                    return true;
+                }
+            }
+            return false;
 
         } catch (SQLException e) {
             System.err.println("VincoloPostgresDAO.inserisci(): " + e.getMessage());
