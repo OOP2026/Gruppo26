@@ -14,10 +14,13 @@ public class Responsabile extends Docente {
     public Responsabile(String nome, String cognome, String email, String login, String password, OrarioLezione orarioLezioni) {
         super(nome, cognome, email, login, password);
         this.orarioLezioni = orarioLezioni;
-
         this.richieste = new ArrayList<>();
         this.auleDisponibili = new ArrayList<>();
         this.insegnamenti = new ArrayList<>();
+    }
+
+    public void setOrario(OrarioLezione orario) {
+        this.orarioLezioni = orario;
     }
 
     public void aggiungiAula(Aula aula) {
@@ -40,11 +43,11 @@ public class Responsabile extends Docente {
 
             if (sovrapposizione) {
                 if ((l.getAula().getNomeAula().equals(aula.getNomeAula())) && (l.getGiorno().equals(giorno))) {
-                    System.out.println("Conflitto, é gia presente una lezione in quell'aula a quell'ora");
+                    System.out.println("Conflitto: è già presente una lezione in quell'aula a quell'ora");
                     return true;
                 }
                 if ((l.getInsegnamento().getDocente().equals(docente)) && (l.getGiorno().equals(giorno)) && (l.getOraInizio().equals(inizioLezione))) {
-                    System.out.println("Conflitto, il docente indicato ha gia una lezione nell'orario selezionato");
+                    System.out.println("Conflitto: il docente ha già una lezione nell'orario selezionato");
                     return true;
                 }
             }
@@ -56,7 +59,7 @@ public class Responsabile extends Docente {
     public boolean creaLezione(LocalDate giorno, LocalTime inizioLezione, LocalTime fineLezione, Aula aula, Insegnamento insegnamento) {
         boolean conflitti = verificaConflitti(giorno, inizioLezione, fineLezione, aula, insegnamento.getDocente());
         if (conflitti) {
-            System.out.println("Non é possibile creare lezione");
+            System.out.println("Non è possibile creare lezione");
             return false;
         } else {
             Lezione nuovaLezione = new Lezione(giorno, inizioLezione, fineLezione, insegnamento, aula);
@@ -82,11 +85,10 @@ public class Responsabile extends Docente {
             return true;
         } else {
             richiesta.setStato(RichiestaSpostamento.StatoRichiesta.RIFIUTATA);
-            System.out.println("non é stato possibile spostare la Lezione");
+            System.out.println("Non è stato possibile spostare la lezione");
             return false;
         }
     }
-
 
     public List<RichiestaSpostamento> getRichieste() {
         return this.richieste;
