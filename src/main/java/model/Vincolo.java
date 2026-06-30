@@ -30,7 +30,8 @@ public class Vincolo{
     public LocalTime getOraFine() { return oraFine; }
     public boolean isApprovato() { return approvato; }
     public void setApprovato(boolean approvato) { this.approvato = approvato; }
-    
+
+
     public boolean coincideConGiorno(LocalDate data) {
         if (data == null || giorno == null) return false;
         return normalizza(giorno).equals(normalizza(nomeGiornoSettimana(data.getDayOfWeek())));
