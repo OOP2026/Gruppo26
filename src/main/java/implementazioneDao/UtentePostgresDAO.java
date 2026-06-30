@@ -9,28 +9,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * Implementazione di {@link UtenteDAO} basata su database PostgreSQL.
+ * <p>
+ * Mappa le righe della tabella {@code utenti} verso la sottoclasse concreta
+ * di {@link Utente} corretta ({@link Studente}, {@link Docente} o
+ * {@link Responsabile}) in base al valore della colonna {@code ruolo}.
+ * </p>
+ *
+ * @author Gruppo26
+ */
 public class UtentePostgresDAO implements UtenteDAO {
 
+    /** Query per il recupero di tutti gli utenti. */
     private static final String SQL_TROVA_TUTTI =
             "SELECT login, password, nome, cognome, email, ruolo, matricola, anno_corso FROM utenti";
 
+    /** Query per il recupero di un utente a partire dal login. */
     private static final String SQL_TROVA_PER_LOGIN =
             SQL_TROVA_TUTTI + " WHERE login = ?";
 
+    /** Query per la verifica delle credenziali (login + password). */
     private static final String SQL_VERIFICA_CREDENZIALI =
             SQL_TROVA_TUTTI + " WHERE login = ? AND password = ?";
 
+    /** Query per l'inserimento di un nuovo utente. */
     private static final String SQL_INSERISCI =
             "INSERT INTO utenti (login, password, nome, cognome, email, ruolo, matricola, anno_corso) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+    /** Query per l'aggiornamento dei dati anagrafici di un utente. */
     private static final String SQL_AGGIORNA =
             "UPDATE utenti SET password = ?, nome = ?, cognome = ?, email = ? WHERE login = ?";
 
+    /** Query per l'eliminazione di un utente. */
     private static final String SQL_ELIMINA =
             "DELETE FROM utenti WHERE login = ?";
 
+    /**
+     * Mappa la riga corrente del {@link ResultSet} verso la sottoclasse
+     * concreta di {@link Utente} corretta, in base al campo {@code ruolo}.
+     *
+     * @param rs il result set posizionato sulla riga da mappare
+     * @return l'utente mappato ({@link Studente}, {@link Docente} o
+     *         {@link Responsabile}), oppure {@code null} se il ruolo non è riconosciuto
+     * @throws SQLException se si verifica un errore nella lettura del result set
+     */
     private Utente mappaRiga(ResultSet rs) throws SQLException {
         String login    = rs.getString("login");
         String password = rs.getString("password");
@@ -58,6 +82,9 @@ public class UtentePostgresDAO implements UtenteDAO {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Utente> trovaTutti() {
         List<Utente> lista = new ArrayList<>();
@@ -75,6 +102,9 @@ public class UtentePostgresDAO implements UtenteDAO {
         return lista;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Utente> trovaPerLogin(String login) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -92,6 +122,9 @@ public class UtentePostgresDAO implements UtenteDAO {
         return Optional.empty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Utente> verificaCredenziali(String login, String password) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -110,6 +143,14 @@ public class UtentePostgresDAO implements UtenteDAO {
         return Optional.empty();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Il ruolo da persistere viene dedotto dal tipo concreto dell'oggetto
+     * {@code utente} ({@code instanceof}); per gli studenti vengono inoltre
+     * salvati matricola e anno di corso.
+     * </p>
+     */
     @Override
     public boolean inserisci(Utente utente) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -149,6 +190,9 @@ public class UtentePostgresDAO implements UtenteDAO {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean aggiorna(Utente utente) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -168,6 +212,9 @@ public class UtentePostgresDAO implements UtenteDAO {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean elimina(String login) {
         try (Connection conn = ConnessioneDatabase.getConnection();

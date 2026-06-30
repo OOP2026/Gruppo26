@@ -10,35 +10,67 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * Implementazione di {@link VincoloDAO} basata su database PostgreSQL.
+ * <p>
+ * Ogni riga letta dalla tabella {@code vincoli} viene unita (JOIN) con la
+ * tabella {@code utenti} per ricostruire il {@link Docente} associato al vincolo.
+ * </p>
+ *
+ * @author Gruppo26
+ */
 public class VincoloPostgresDAO implements VincoloDAO {
 
 
+    /** Query base con il JOIN necessario a ricostruire un {@link Vincolo} completo. */
     private static final String SELECT_BASE =
             "SELECT v.id_vincolo, v.giorno, v.ora_inizio, v.ora_fine, v.approvato, " +
                     "       u.login, u.nome, u.cognome, u.email " +
                     "FROM vincoli v " +
                     "JOIN utenti u ON v.login_docente = u.login ";
 
+    /** Query per il recupero di tutti i vincoli. */
     private static final String SQL_TROVA_TUTTI   = SELECT_BASE;
+
+    /** Query per il recupero dei vincoli di un determinato docente. */
     private static final String SQL_PER_DOCENTE   = SELECT_BASE + "WHERE v.login_docente = ?";
+
+    /** Query per il recupero dei soli vincoli approvati. */
     private static final String SQL_APPROVATI     = SELECT_BASE + "WHERE v.approvato = TRUE";
+
+    /** Query per il recupero di un vincolo a partire dal suo id. */
     private static final String SQL_PER_ID        = SELECT_BASE + "WHERE v.id_vincolo = ?";
 
+    /** Query per il conteggio dei vincoli dichiarati da un determinato docente. */
     private static final String SQL_CONTA_PER_DOCENTE =
             "SELECT COUNT(*) FROM vincoli WHERE login_docente = ?";
 
+    /** Query per l'inserimento di un nuovo vincolo (non approvato). */
     private static final String SQL_INSERISCI =
             "INSERT INTO vincoli (login_docente, giorno, ora_inizio, ora_fine, approvato) " +
                     "VALUES (?, ?, ?, ?, FALSE) RETURNING id_vincolo";
 
+    /** Query per l'aggiornamento dello stato di approvazione di un vincolo. */
     private static final String SQL_AGGIORNA_APPROVAZIONE =
             "UPDATE vincoli SET approvato = ? WHERE id_vincolo = ?";
 
+    /** Query per l'eliminazione di un vincolo. */
     private static final String SQL_ELIMINA =
             "DELETE FROM vincoli WHERE id_vincolo = ?";
 
 
+    /**
+     * Mappa la riga corrente del {@link ResultSet} in un oggetto {@link Vincolo}
+     * completo, ricostruendo anche il {@link Docente} associato.
+     * <p>
+     * Nota: il docente viene ricostruito con password vuota, poiché la query
+     * non la recupera.
+     * </p>
+     *
+     * @param rs il result set posizionato sulla riga da mappare
+     * @return il vincolo mappato, con id e stato di approvazione già impostati
+     * @throws SQLException se si verifica un errore nella lettura del result set
+     */
     private Vincolo mappaRiga(ResultSet rs) throws SQLException {
         Docente docente = new Docente(
                 rs.getString("nome"),
@@ -59,6 +91,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         return v;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Vincolo> trovaTutti() {
         List<Vincolo> lista = new ArrayList<>();
@@ -74,6 +109,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         return lista;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Vincolo> trovaPerDocente(String loginDocente) {
         List<Vincolo> lista = new ArrayList<>();
@@ -90,6 +128,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         return lista;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Vincolo> trovaApprovati() {
         List<Vincolo> lista = new ArrayList<>();
@@ -105,6 +146,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         return lista;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Vincolo> trovaPerID(int id) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -120,6 +164,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         return Optional.empty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int contaPerDocente(String loginDocente) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -135,6 +182,13 @@ public class VincoloPostgresDAO implements VincoloDAO {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * L'identificativo generato dal database viene riportato sull'oggetto
+     * {@code vincolo} passato come parametro tramite {@link Vincolo#setId(int)}.
+     * </p>
+     */
     @Override
     public boolean inserisci(Vincolo vincolo) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -159,6 +213,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean aggiornaApprovazione(int id, boolean approvato) {
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -174,6 +231,9 @@ public class VincoloPostgresDAO implements VincoloDAO {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean elimina(int id) {
         try (Connection conn = ConnessioneDatabase.getConnection();
