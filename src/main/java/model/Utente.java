@@ -36,4 +36,9 @@ public class Utente {
     }
 
     public String getLogin(){ return login; }
+
+    public String getEmail(){ return email; }
+
+    public String getPassword(){ return password; }
+
 }
