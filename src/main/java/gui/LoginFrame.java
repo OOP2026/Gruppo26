@@ -22,7 +22,6 @@ public class LoginFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // MIGLIORAMENTO: lambda invece di classe anonima ActionListener
         loginButton.addActionListener(e -> {
             String username = textUsername.getText();
             String password = new String(txtPassword.getPassword());
@@ -38,12 +37,10 @@ public class LoginFrame extends JFrame {
                         "Credenziali non valide!",
                         "Errore",
                         JOptionPane.ERROR_MESSAGE);
-                // MIGLIORAMENTO: pulizia del campo password dopo un tentativo fallito
                 txtPassword.setText("");
             }
         });
 
-        // MIGLIORAMENTO: lambda invece di classe anonima ActionListener
         chkMostraPassword.addActionListener(e -> {
             if (chkMostraPassword.isSelected()) {
                 txtPassword.setEchoChar((char) 0);

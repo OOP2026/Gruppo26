@@ -50,12 +50,10 @@ public class VincoloDialog extends JDialog {
             txtOraInizio.setEnabled(true);
             txtOraFine.setEnabled(true);
 
-            // MIGLIORAMENTO: hint visivo per guidare il docente sul formato atteso
             txtOraInizio.setToolTipText("Formato: H:MM o HH:MM (es. 9:00 oppure 14:30)");
             txtOraFine.setToolTipText("Formato: H:MM o HH:MM (es. 11:00 oppure 16:00)");
         }
 
-        // MIGLIORAMENTO: lambda invece di classi anonime ActionListener
         btnInvia.addActionListener(e -> {
             String giorno = txtGiorno.getText().trim();
             String inizio = txtOraInizio.getText().trim();
@@ -69,7 +67,6 @@ public class VincoloDialog extends JDialog {
             boolean successo = controller.inoltraRichiestaVincolo(giorno, inizio, fine);
             if (successo) {
                 JOptionPane.showMessageDialog(mainPanel, "Richiesta inoltrata con successo!");
-                // MIGLIORAMENTO: pulizia dei campi dopo invio riuscito
                 txtGiorno.setText("");
                 txtOraInizio.setText("");
                 txtOraFine.setText("");

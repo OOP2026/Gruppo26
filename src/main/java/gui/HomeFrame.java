@@ -40,7 +40,6 @@ public class HomeFrame extends JFrame {
         menuBar.add(menuVisualizza);
         setJMenuBar(menuBar);
 
-        // MIGLIORAMENTO: lambda invece di classe anonima
         itemBacheca.addActionListener(e -> {
             BachecaRichiesteDialog bacheca = new BachecaRichiesteDialog(HomeFrame.this, controller);
             bacheca.setVisible(true);
@@ -72,8 +71,6 @@ public class HomeFrame extends JFrame {
             aggiornaTabellaOrario();
         });
 
-        // FIX WARN: aggiunto controller.logout() prima di tornare al LoginFrame,
-        // così utentelogg viene azzerato e non rimane il riferimento all'utente precedente.
         btnLogout.addActionListener(e -> {
             controller.logout();
             dispose();
@@ -113,8 +110,6 @@ public class HomeFrame extends JFrame {
 
         // Pulsante gestione aule (solo per responsabili)
         btnGestioneAule.setVisible(controller.puoGestireAule());
-        // FIX WARN: GestioneDialog ora riceve HomeFrame.this come parent,
-        // invece di essere istanziato orfano dal Controller.
         btnGestioneAule.addActionListener(e -> {
             GestioneDialog dialog = new GestioneDialog(HomeFrame.this, controller);
             dialog.setVisible(true);

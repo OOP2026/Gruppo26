@@ -55,7 +55,6 @@ public class BachecaRichiesteDialog extends JDialog {
 
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        // MIGLIORAMENTO: lambda invece di classe anonima
         JButton btnChiudi = new JButton("Chiudi");
         btnChiudi.addActionListener(e -> dispose());
         JPanel bottomPanel = new JPanel();

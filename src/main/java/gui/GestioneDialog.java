@@ -13,12 +13,7 @@ public class GestioneDialog extends JDialog {
 
     private Controller controller;
 
-    // FIX WARN: aggiunto il parametro JFrame parent al costruttore.
-    // Prima veniva istanziato senza parent (dal Controller), causando
-    // possibili problemi di posizionamento e modalità del dialog.
     public GestioneDialog(JFrame parent, Controller controller) {
-        // FIX: ora il dialog conosce il suo parent frame, garantendo
-        // comportamento modale corretto e posizionamento relativo alla finestra chiamante.
         super(parent, "Pannello Admin - Gestione Richieste", true);
         this.controller = controller;
 
@@ -28,7 +23,6 @@ public class GestioneDialog extends JDialog {
 
         caricaDatiTabella();
 
-        // MIGLIORAMENTO: lambda invece di classi anonime ActionListener
         btnApprova.addActionListener(e -> {
             int riga = tableRichieste.getSelectedRow();
             if (riga == -1) {

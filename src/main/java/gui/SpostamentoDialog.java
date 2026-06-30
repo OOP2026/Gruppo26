@@ -31,13 +31,10 @@ public class SpostamentoDialog extends JDialog {
 
         lblInfoLezione.setText("Stai spostando: " + lezione.getInsegnamento().getNomeInsegnamento());
 
-        // MIGLIORAMENTO: hint visivo nei campi per guidare l'utente sul formato atteso
         txtData.setToolTipText("Formato: AAAA-MM-GG (es. 2025-06-15)");
         txtOraInizio.setToolTipText("Formato: H:MM o HH:MM (es. 9:00 oppure 14:30)");
         txtOraFine.setToolTipText("Formato: H:MM o HH:MM (es. 11:00 oppure 16:00)");
 
-        // MIGLIORAMENTO: lambda invece di classi anonime ActionListener
-        // FIX: rimosso il secondo "import javax.swing.*;" duplicato che era presente nell'originale
         btnAnnulla.addActionListener(e -> dispose());
 
         btnInvia.addActionListener(e -> {
@@ -45,7 +42,6 @@ public class SpostamentoDialog extends JDialog {
             String nuovaOraInizio = txtOraInizio.getText().trim();
             String nuovaOraFine = txtOraFine.getText().trim();
 
-            // MIGLIORAMENTO: validazione campi vuoti prima di chiamare il controller
             if (nuovaData.isEmpty() || nuovaOraInizio.isEmpty() || nuovaOraFine.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                         "Compila tutti i campi prima di inviare la richiesta.",
