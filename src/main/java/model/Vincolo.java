@@ -1,6 +1,9 @@
 package model;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.text.Normalizer;
 
 public class Vincolo{
     private int id = -1;
@@ -27,4 +30,27 @@ public class Vincolo{
     public LocalTime getOraFine() { return oraFine; }
     public boolean isApprovato() { return approvato; }
     public void setApprovato(boolean approvato) { this.approvato = approvato; }
+    
+    public boolean coincideConGiorno(LocalDate data) {
+        if (data == null || giorno == null) return false;
+        return normalizza(giorno).equals(normalizza(nomeGiornoSettimana(data.getDayOfWeek())));
+    }
+
+    private static String normalizza(String s) {
+        String senzaAccenti = Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return senzaAccenti.trim().toUpperCase();
+    }
+
+    private static String nomeGiornoSettimana(DayOfWeek dow) {
+        switch (dow) {
+            case MONDAY:    return "LUNEDI";
+            case TUESDAY:   return "MARTEDI";
+            case WEDNESDAY: return "MERCOLEDI";
+            case THURSDAY:  return "GIOVEDI";
+            case FRIDAY:    return "VENERDI";
+            case SATURDAY:  return "SABATO";
+            default:        return "DOMENICA";
+        }
+    }
 }
