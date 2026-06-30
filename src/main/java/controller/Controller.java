@@ -102,7 +102,7 @@ public class Controller {
 			if (resp == null) { System.out.println("Controller: nessun responsabile trovato."); return false; }
 
 			Docente doc = (Docente) this.utentelogg;
-			doc.richiedispostamento(lezione, nuovaOraInizio, nuovaOraFine, nuovaData, resp);
+			doc.richiediSpostamento(lezione, nuovaOraInizio, nuovaOraFine, nuovaData, resp);
 
 
 			List<RichiestaSpostamento> richieste = resp.getRichieste();
@@ -162,6 +162,14 @@ public class Controller {
 		if (approva) {
 			resp.getRichieste().clear();
 			resp.getRichieste().addAll(richieste);
+
+			Docente docenteLezione = richiesta.getLezioneRichiesta().getInsegnamento().getDocente();
+			List<Vincolo> vincoliApprovati = vincoloDAO.trovaPerDocente(docenteLezione.getLogin())
+					.stream()
+					.filter(Vincolo::isApprovato)
+					.collect(java.util.stream.Collectors.toList());
+			docenteLezione.setVincoli(vincoliApprovati);
+
 			boolean esito = resp.gestisciRichiesta(richiesta);
 
 			RichiestaSpostamento.StatoRichiesta nuovoStato = esito
@@ -172,15 +180,11 @@ public class Controller {
 
 			if (esito) {
 				Lezione lezMod = richiesta.getLezioneRichiesta();
-				List<Lezione> tutteLezioni = lezioneDAO.trovaTutte();
-				for (Lezione l : tutteLezioni) {
-					if (l.getInsegnamento().getNomeInsegnamento()
-							.equals(lezMod.getInsegnamento().getNomeInsegnamento())) {
-						lezMod.setId(l.getId());
-						lezioneDAO.aggiorna(l.getId(), lezMod);
-						System.out.println("Controller: lezione aggiornata sul DB con id=" + l.getId());
-						break;
-					}
+				boolean aggiornata = lezioneDAO.aggiorna(lezMod.getId(), lezMod);
+				if (aggiornata) {
+					System.out.println("Controller: lezione aggiornata sul DB con id=" + lezMod.getId());
+				} else {
+					System.out.println("Controller: ATTENZIONE - aggiornamento lezione non riuscito per id=" + lezMod.getId());
 				}
 				ricaricaOrarioDalDB();
 			}
