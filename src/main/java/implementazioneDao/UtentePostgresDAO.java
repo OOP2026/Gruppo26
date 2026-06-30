@@ -116,10 +116,10 @@ public class UtentePostgresDAO implements UtenteDAO {
              PreparedStatement ps = conn.prepareStatement(SQL_INSERISCI)) {
 
             ps.setString(1, utente.getLogin());
-            ps.setString(2, "");
+            ps.setString(2, utente.getPassword() != null ? utente.getPassword() : "");
             ps.setString(3, utente.getNome());
             ps.setString(4, utente.getCognome());
-            ps.setString(5, "");  // email — da valorizzare se si aggiunge getEmail() in Utente
+            ps.setString(5, utente.getEmail() != null ? utente.getEmail() : "");
 
             String ruolo;
             String matricola = null;
@@ -154,10 +154,10 @@ public class UtentePostgresDAO implements UtenteDAO {
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_AGGIORNA)) {
 
-            ps.setString(1, "");            // password — da integrare con getPassword()
+            ps.setString(1, utente.getPassword() != null ? utente.getPassword() : "");
             ps.setString(2, utente.getNome());
             ps.setString(3, utente.getCognome());
-            ps.setString(4, "");            // email — da integrare con getEmail()
+            ps.setString(4, utente.getEmail() != null ? utente.getEmail() : "");
             ps.setString(5, utente.getLogin());
 
             return ps.executeUpdate() > 0;

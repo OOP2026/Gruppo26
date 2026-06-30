@@ -64,7 +64,7 @@ public class RichiestaSpostamentoPostgresDAO implements RichiestaSpostamentoDAO 
         RichiestaSpostamento richiesta =
                 new RichiestaSpostamento(oraInizio, oraFine, dataRichiesta, lezione);
 
-        // Salva l'ID reale del DB nell'oggetto
+
         richiesta.setId(rs.getInt("id_richiesta"));
 
         try {
@@ -152,7 +152,10 @@ public class RichiestaSpostamentoPostgresDAO implements RichiestaSpostamentoDAO 
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_INSERISCI)) {
 
-            int idLezione = getIdLezione(conn, richiesta.getLezioneRichiesta());
+            int idLezione = richiesta.getLezioneRichiesta().getId();
+            if (idLezione <= 0) {
+                idLezione = getIdLezione(conn, richiesta.getLezioneRichiesta());
+            }
             ps.setInt  (1, idLezione);
             ps.setDate (2, Date.valueOf(richiesta.getDataRichiesta()));
             ps.setTime (3, Time.valueOf(richiesta.getOrarioInizioRichiesta()));
