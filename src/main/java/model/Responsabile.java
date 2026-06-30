@@ -52,6 +52,17 @@ public class Responsabile extends Docente {
                 }
             }
         }
+
+        for (Vincolo v : docente.getVincoli()) {
+            if (v.isApprovato() && v.coincideConGiorno(giorno)) {
+                boolean sovrapposizioneVincolo = inizioLezione.isBefore(v.getOraFine()) && fineLezione.isAfter(v.getOraInizio());
+                if (sovrapposizioneVincolo) {
+                    System.out.println("Conflitto: il docente non è disponibile in quella fascia oraria (vincolo approvato)");
+                    return true;
+                }
+            }
+        }
+
         System.out.println("Non ci sono conflitti");
         return false;
     }
