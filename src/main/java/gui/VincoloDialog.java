@@ -7,19 +7,60 @@ import model.Utente;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Finestra di dialogo per la gestione dei vincoli di indisponibilità dei docenti.
+ * <p>
+ * L'interfaccia si adatta dinamicamente al ruolo dell'utente loggato:
+ * <ul>
+ *     <li>un {@link Docente} può inserire nuovi vincoli di indisponibilità
+ *     (giorno e fascia oraria), ma non può approvarli o rifiutarli;</li>
+ *     <li>un {@link Responsabile} può visualizzare i vincoli esistenti e
+ *     approvarli o rifiutarli, ma non può inserirne di nuovi.</li>
+ * </ul>
+ * La tabella dei vincoli viene aggiornata automaticamente dopo ogni
+ * operazione di inserimento, approvazione o rifiuto.
+ */
 public class VincoloDialog extends JDialog {
 
+    /** Pannello principale generato dal form grafico (GUI Designer). */
     private JPanel mainPanel;
+
+    /** Tabella che mostra l'elenco dei vincoli di indisponibilità. */
     private JTable tableVincoli;
+
+    /** Campo di testo per l'inserimento del giorno del vincolo. */
     private JTextField txtGiorno;
+
+    /** Campo di testo per l'inserimento dell'ora di inizio del vincolo. */
     private JTextField txtOraInizio;
+
+    /** Campo di testo per l'inserimento dell'ora di fine del vincolo. */
     private JTextField txtOraFine;
+
+    /** Pulsante per inviare una nuova richiesta di vincolo (visibile solo ai docenti). */
     private JButton btnInvia;
+
+    /** Pulsante per approvare il vincolo selezionato (visibile solo ai responsabili). */
     private JButton btnApprova;
+
+    /** Pulsante per rifiutare il vincolo selezionato (visibile solo ai responsabili). */
     private JButton btnRifiuta;
 
+    /** Controller applicativo usato per recuperare dati e invocare la logica di business. */
     private Controller controller;
 
+    /**
+     * Costruisce la finestra di dialogo per la gestione dei vincoli.
+     * <p>
+     * Carica i dati iniziali della tabella dei vincoli e configura la
+     * visibilità/abilitazione dei componenti in base al ruolo dell'utente
+     * loggato (ottenuto tramite {@link Controller#getUtenteLoggato()}).
+     * Registra inoltre i listener per l'invio di una nuova richiesta di
+     * vincolo e per l'approvazione/rifiuto dei vincoli esistenti.
+     *
+     * @param parent     la finestra principale da cui viene aperto il dialogo
+     * @param controller il controller applicativo da utilizzare per la logica di business
+     */
     public VincoloDialog(JFrame parent, Controller controller) {
         super(parent, "Gestione Vincoli", true);
         this.controller = controller;
@@ -102,6 +143,13 @@ public class VincoloDialog extends JDialog {
         });
     }
 
+    /**
+     * Aggiorna la tabella dei vincoli mostrata nella finestra di dialogo.
+     * <p>
+     * Recupera dal {@link Controller} i dati e le intestazioni aggiornate
+     * dei vincoli e li imposta come nuovo modello della tabella
+     * {@code tableVincoli}, rendendo le celle non editabili dall'utente.
+     */
     private void aggiornaTabella() {
         String[][] dati = controller.getVincoliTabella();
         String[] colonne = controller.getIntestazioniVincoli();

@@ -6,19 +6,61 @@ import model.Utente;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Finestra principale (dashboard) dell'applicazione, mostrata dopo il login.
+ * <p>
+ * Visualizza l'orario delle lezioni dell'utente autenticato e fornisce
+ * accesso, in base al ruolo dell'utente ({@code Studente}, {@code Docente},
+ * {@code Responsabile}), alle varie funzionalità dell'applicazione:
+ * <ul>
+ *     <li>richiesta di spostamento di una lezione;</li>
+ *     <li>inserimento/gestione dei vincoli di indisponibilità dei docenti;</li>
+ *     <li>gestione amministrativa delle richieste (solo per i responsabili);</li>
+ *     <li>visualizzazione della bacheca pubblica di spostamenti e vincoli;</li>
+ *     <li>visualizzazione degli avvisi di indisponibilità docenti (solo per studenti).</li>
+ * </ul>
+ */
 public class HomeFrame extends JFrame {
 
+    /** Pannello principale generato dal form grafico (GUI Designer). */
     private JPanel mainPanel;
+
+    /** Etichetta di benvenuto con nome, cognome e ruolo dell'utente loggato. */
     private JLabel lblBenvenuto;
+
+    /** Pulsante per effettuare il logout e tornare alla schermata di login. */
     private JButton btnLogout;
+
+    /** Pulsante per accedere al pannello di gestione delle richieste (solo responsabili). */
     private JButton btnGestioneAule;
+
+    /** Tabella che mostra l'orario delle lezioni dell'utente. */
     private JTable tableOrario;
+
+    /** Pulsante per richiedere lo spostamento della lezione selezionata. */
     private JButton btnRichiediSpostamento;
+
+    /** Pulsante per aprire la finestra di gestione dei vincoli (docenti/responsabili). */
     private JButton btnVincolo;
+
+    /** Pulsante per visualizzare gli avvisi di indisponibilità docenti (solo studenti). */
     private JButton btnAvvisi;
 
+    /** Controller applicativo usato per recuperare dati e invocare la logica di business. */
     private Controller controller;
 
+    /**
+     * Costruisce la dashboard principale per l'utente attualmente autenticato.
+     * <p>
+     * Configura il titolo, le dimensioni della finestra e il messaggio di
+     * benvenuto, costruisce il menu "Visualizza" per l'apertura della bacheca
+     * pubblica, e mostra/nasconde i pulsanti funzionali in base al ruolo
+     * dell'utente loggato (Studente, Docente, Responsabile). Registra inoltre
+     * tutti i listener necessari alla navigazione verso le altre finestre
+     * dell'applicazione e aggiorna la tabella dell'orario all'avvio.
+     *
+     * @param controller il controller applicativo da utilizzare per la logica di business
+     */
     public HomeFrame(Controller controller) {
         this.controller = controller;
 
@@ -119,6 +161,13 @@ public class HomeFrame extends JFrame {
         aggiornaTabellaOrario();
     }
 
+    /**
+     * Aggiorna la tabella dell'orario delle lezioni mostrata nella dashboard.
+     * <p>
+     * Recupera dal {@link Controller} i dati e le intestazioni aggiornate
+     * dell'orario e li imposta come nuovo modello della tabella
+     * {@code tableOrario}, rendendo le celle non editabili dall'utente.
+     */
     public void aggiornaTabellaOrario() {
         String[][] datiTabella = controller.getOrarioTabella();
         String[] colonneTabella = controller.getIntestazioniTabella();
