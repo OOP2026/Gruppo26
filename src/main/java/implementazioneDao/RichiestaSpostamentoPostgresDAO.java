@@ -163,7 +163,6 @@ public class RichiestaSpostamentoPostgresDAO implements RichiestaSpostamentoDAO 
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // Salva nell'oggetto l'ID generato dal DB
                     richiesta.setId(rs.getInt(1));
                     System.out.println("RichiestaSpostamentoPostgresDAO: inserita con id=" + richiesta.getId());
                     return true;

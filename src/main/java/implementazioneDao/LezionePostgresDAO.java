@@ -54,7 +54,6 @@ public class LezionePostgresDAO implements LezioneDAO {
                 rs.getInt("anno"), docente);
 
         Lezione lezione = new Lezione(giorno, oraInizio, oraFine, insegnamento, aula);
-        // Salva l'ID reale del DB
         lezione.setId(rs.getInt("id_lezione"));
         return lezione;
     }
