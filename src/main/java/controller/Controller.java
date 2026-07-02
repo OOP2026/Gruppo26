@@ -60,7 +60,6 @@ public class Controller {
 	 */
 	private void ricaricaOrarioDalDB() {
 		List<Lezione> lezioniDB = lezioneDAO.trovaTutte();
-		System.out.println("Controller: lezioni caricate dal DB: " + lezioniDB.size());
 		this.orario.getLezioni().clear();
 		this.orario.getLezioni().addAll(lezioniDB);
 	}
@@ -191,7 +190,6 @@ public class Controller {
 	 */
 	public boolean inoltraRichiestaSpostamento(Lezione lezione, String data, String oraInizio, String oraFine) {
 		if (!(this.utentelogg instanceof Docente) || this.utentelogg instanceof Responsabile) {
-			System.out.println("Controller: Solo un docente può richiedere uno spostamento.");
 			return false;
 		}
 		try {
@@ -200,7 +198,7 @@ public class Controller {
 			java.time.LocalTime nuovaOraFine   = java.time.LocalTime.parse(oraFine);
 
 			Responsabile resp = getResponsabile();
-			if (resp == null) { System.out.println("Controller: nessun responsabile trovato."); return false; }
+			if (resp == null) {  return false; }
 
 			Docente doc = (Docente) this.utentelogg;
 			doc.richiediSpostamento(lezione, nuovaOraInizio, nuovaOraFine, nuovaData, resp);
@@ -209,7 +207,7 @@ public class Controller {
 			List<RichiestaSpostamento> richieste = resp.getRichieste();
 			RichiestaSpostamento ultima = richieste.get(richieste.size() - 1);
 			boolean salvata = richiestaDAO.inserisci(ultima);
-			if (!salvata) System.out.println("Controller: attenzione – richiesta non persistita sul DB.");
+			if (!salvata) ;
 			return salvata;
 
 		} catch (java.time.format.DateTimeParseException e) {
@@ -293,13 +291,11 @@ public class Controller {
 		List<RichiestaSpostamento> richieste = richiestaDAO.trovaTutte();
 
 		if (indice < 0 || indice >= richieste.size()) {
-			System.out.println("Controller: indice richiesta non valido.");
 			return false;
 		}
 
 		RichiestaSpostamento richiesta = richieste.get(indice);
-		int idRealeDB = richiesta.getId(); // ID reale letto dal DB
-		System.out.println("Controller: gestendo richiesta con id_richiesta=" + idRealeDB);
+		int idRealeDB = richiesta.getId();
 
 		if (approva) {
 			resp.getRichieste().clear();
@@ -354,7 +350,6 @@ public class Controller {
 	 */
 	public boolean inoltraRichiestaVincolo(String giorno, String oraInizio, String oraFine) {
 		if (!(this.utentelogg instanceof Docente) || this.utentelogg instanceof Responsabile) {
-			System.out.println("Controller: Solo un docente può inserire vincoli.");
 			return false;
 		}
 		try {
