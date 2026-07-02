@@ -92,6 +92,8 @@ public class RichiestaSpostamentoPostgresDAO implements RichiestaSpostamentoDAO 
                 rs.getInt("anno"), docente);
 
         Lezione lezione = new Lezione(giornoLezione, lezOraInizio, lezOraFine, insegnamento, aula);
+        lezione.setId(rs.getInt("id_lezione"));
+
 
         RichiestaSpostamento richiesta =
                 new RichiestaSpostamento(oraInizio, oraFine, dataRichiesta, lezione);
