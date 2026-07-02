@@ -28,13 +28,6 @@ public class Utente {
     protected String password;
 
     /**
-     * Ruolo dell'utente (es. {@code "DOCENTE"}, {@code "STUDENTE"}, {@code "RESPONSABILE"}).
-     * Campo attualmente non valorizzato dal costruttore ma riservato per usi futuri
-     * o per la mappatura diretta dal database.
-     */
-    protected String ruolo;
-
-    /**
      * Costruisce un nuovo utente con i dati anagrafici e le credenziali indicate.
      *
      * @param nome     il nome dell'utente
