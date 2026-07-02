@@ -118,19 +118,4 @@ public class Lezione {
      * @param oraInizio la nuova ora di inizio
      */
     public void setOraInizio(LocalTime oraInizio) {this.oraInizio = oraInizio;}
-
-    /**
-     * Restituisce una rappresentazione testuale leggibile della lezione,
-     * comprensiva di data, orario, materia, aula e cognome del docente.
-     *
-     * @return la rappresentazione testuale della lezione
-     */
-    @Override
-    public String toString() {
-        return "Data: " + giorno +
-                " | Ore: " + oraInizio + " - " + oraFine +
-                " | Materia: " + insegnamento.getNomeInsegnamento() +
-                " | Aula: " + aula.getNomeAula() +
-                " | Prof: " + insegnamento.getDocente().getCognome();
-    }
 }

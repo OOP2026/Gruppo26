@@ -45,19 +45,6 @@ public class Utente {
     }
 
     /**
-     * Stampa su console una rappresentazione testuale dell'orario delle lezioni fornito.
-     * <p>
-     * Metodo di utilità minimale: per una visualizzazione tabellare completa
-     * si veda {@link OrarioLezione#mostraOrario(OrarioLezione)}.
-     * </p>
-     *
-     * @param orario l'orario delle lezioni da mostrare
-     */
-    public void mostraOrario(OrarioLezione orario) {
-        System.out.println(orario);
-    }
-
-    /**
      * Verifica se le credenziali fornite corrispondono a quelle dell'utente.
      *
      * @param login    il login da verificare

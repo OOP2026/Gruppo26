@@ -68,7 +68,6 @@ public class Responsabile extends Docente {
      */
     public void aggiungiAula(Aula aula) {
         this.auleDisponibili.add(aula);
-        System.out.println("Aggiunta aula: " + aula.getNomeAula());
     }
 
     /**
@@ -78,7 +77,6 @@ public class Responsabile extends Docente {
      */
     public void aggiungiInsegnamento(Insegnamento NuovoInsegnamento) {
         this.insegnamenti.add(NuovoInsegnamento);
-        System.out.println("Aggiunto insegnamento: " + NuovoInsegnamento.getNomeInsegnamento());
     }
 
     /**
@@ -139,7 +137,6 @@ public class Responsabile extends Docente {
             }
         }
 
-        System.out.println("Non ci sono conflitti");
         return false;
     }
 
@@ -158,7 +155,6 @@ public class Responsabile extends Docente {
     public boolean creaLezione(LocalDate giorno, LocalTime inizioLezione, LocalTime fineLezione, Aula aula, Insegnamento insegnamento) {
         boolean conflitti = verificaConflitti(giorno, inizioLezione, fineLezione, aula, insegnamento.getDocente());
         if (conflitti) {
-            System.out.println("Non è possibile creare lezione");
             return false;
         } else {
             Lezione nuovaLezione = new Lezione(giorno, inizioLezione, fineLezione, insegnamento, aula);

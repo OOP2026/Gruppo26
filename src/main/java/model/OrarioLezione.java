@@ -38,22 +38,4 @@ public class OrarioLezione {
     public void aggiungiLezione(Lezione l) {
         this.lezioni.add(l);
     }
-
-    /**
-     * Stampa su console, in formato tabellare testuale, tutte le lezioni
-     * contenute nell'orario fornito.
-     *
-     * @param orario l'orario di cui mostrare le lezioni
-     */
-    public void mostraOrario(OrarioLezione orario){
-        System.out.println("--- ORARIO DELLE LEZIONI ---");
-        for (Lezione l : orario.getLezioni()) {
-            System.out.println("Data: " + l.getGiorno() +
-                    " | Ore: " + l.getOraInizio() + " - " + l.getOraFine() +
-                    " | Materia: " + l.getInsegnamento().getNomeInsegnamento() +
-                    " | Aula: " + l.getAula().getNomeAula() +
-                    " | Prof: " + l.getInsegnamento().getDocente().getCognome());
-        }
-        System.out.println("----------------------------");
-    }
 }

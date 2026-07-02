@@ -85,6 +85,5 @@ public class Docente extends Utente {
     public void richiediSpostamento(Lezione lezione, LocalTime nuovaOraInizio, LocalTime nuovaOraFine, LocalDate nuovoGiorno, Responsabile responsabile) {
         RichiestaSpostamento nuovaRichiesta = new RichiestaSpostamento(nuovaOraInizio, nuovaOraFine, nuovoGiorno, lezione);
         responsabile.riceviRichiesta(nuovaRichiesta);
-        System.out.println("Richiesta di spostamento inviata al responsabile per la lezione del " + nuovoGiorno);
     }
 }
