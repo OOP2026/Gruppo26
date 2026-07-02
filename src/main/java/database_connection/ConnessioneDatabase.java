@@ -48,7 +48,6 @@ public class ConnessioneDatabase {
             throw new SQLException("Driver PostgreSQL non trovato: " + e.getMessage(), e);
         }
         Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-        System.out.println("ConnessioneDatabase: connessione aperta.");
         return conn;
     }
 }
